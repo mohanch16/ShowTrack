@@ -10,17 +10,8 @@ internal class Program
     private static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        AddBsonMappings();
         ConfigureServices(builder);
         ConfigureApp(builder);
-    }
-
-    private static void AddBsonMappings()
-    {
-        // BsonClassMap.RegisterClassMap<Show>(cm =>
-        // {
-        //     cm.MapIdMember(c => c.Id).SetIdGenerator(new ObjectIdGenerator());            
-        // });
     }
 
     private static void ConfigureServices(WebApplicationBuilder builder)
