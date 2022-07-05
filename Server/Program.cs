@@ -1,20 +1,40 @@
 using Microsoft.AspNetCore.ResponseCompression;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.IdGenerators;
+using ShowTrack.Server.Models;
+using ShowTrack.Server.Services;
+using ShowTrack.Shared.Models;
 
 internal class Program
 {
     private static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        AddBsonMappings();
         ConfigureServices(builder);
         ConfigureApp(builder);
     }
 
+    private static void AddBsonMappings()
+    {
+        // BsonClassMap.RegisterClassMap<Show>(cm =>
+        // {
+        //     cm.MapIdMember(c => c.Id).SetIdGenerator(new ObjectIdGenerator());            
+        // });
+    }
+
     private static void ConfigureServices(WebApplicationBuilder builder)
     {
-
         // Add services to the container.
+        builder.Services.Configure<ShowsDatabaseSettings>(
+            builder.Configuration.GetSection("ShowsDatabaseSettings"));
+        
+        builder.Services.AddSingleton<ShowsService>();
+        
+        builder.Services.AddControllersWithViews()
+        .AddJsonOptions(
+            options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
 
-        builder.Services.AddControllersWithViews();
         builder.Services.AddRazorPages();
 
         builder.Services.AddSwaggerGen();

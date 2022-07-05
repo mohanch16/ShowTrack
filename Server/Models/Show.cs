@@ -1,9 +1,12 @@
-using System.ComponentModel;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace ShowTrack.Shared.Models;
 
 public class Show
 {    
+    [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]
     public string? Id { get; set; }
 
     public ShowType Type { get; set; }
@@ -27,22 +30,4 @@ public class Show
     public string Description { get; set; } = null!;    
 
     public SubscriptionType SubscriptionType { get; set; }
-}
-
-public enum ShowType 
-{
-    None = 0,
-    Movie = 1,
-    [Description("TV Show")]
-    TVShow = 2
-}
-
-public enum SubscriptionType
-{
-    None = 0,
-    Netflix = 1,
-    [Description("Amazon Prime Video")]
-    PrimeVideo = 2,
-    [Description("Disney Plus")]
-    DisneyPlus = 3,
 }
