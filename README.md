@@ -4,6 +4,12 @@ Showtrack is a movie catalog app letting users view, search, and compare various
 
 **Status**: In progress
 
+<ins>Tech stack<ins>: 
+- Blazor-WebAssembly framework
+- Databaase: MongoDB
+
+
+
 <ins>References<ins>:
 1) https://www.kaggle.com/datasets/shivamb/amazon-prime-movies-and-tv-shows
 2) https://www.kaggle.com/datasets/shivamb/netflix-shows
