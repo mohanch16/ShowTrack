@@ -3,7 +3,6 @@ using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.IdGenerators;
 using ShowTrack.Server.Models;
 using ShowTrack.Server.Services;
-using ShowTrack.Shared.Models;
 
 internal class Program
 {
