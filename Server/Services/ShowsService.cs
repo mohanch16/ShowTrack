@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using ShowTrack.Server.Models;
-using ShowTrack.Shared.Models;
 
 namespace ShowTrack.Server.Services;
 

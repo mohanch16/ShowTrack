@@ -1,4 +1,4 @@
-using ShowTrack.Shared.Models;
+using ShowTrack.Server.Models;
 using ShowTrack.Server.Services;
 using Microsoft.AspNetCore.Mvc;
 

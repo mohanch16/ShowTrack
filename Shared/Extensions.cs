@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Reflection;
 
-namespace ShowTrack.Extensions;
+namespace ShowTrack.Shared.Extensions;
 
 public static class Extensions
 {

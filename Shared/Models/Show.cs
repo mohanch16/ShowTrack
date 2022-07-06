@@ -1,13 +1,12 @@
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-using ShowTrack.Shared.Models;
+// using MongoDB.Bson;
+// using MongoDB.Bson.Serialization.Attributes;
 
-namespace ShowTrack.Server.Models;
+namespace ShowTrack.Shared.Models;
 
 public class Show
 {    
-    [BsonId]
-    [BsonRepresentation(BsonType.ObjectId)]
+    // [BsonId]
+    // [BsonRepresentation(BsonType.ObjectId)]
     public string? Id { get; set; }
 
     public ShowType Type { get; set; }

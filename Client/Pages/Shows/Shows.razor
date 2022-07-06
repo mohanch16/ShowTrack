@@ -1,0 +1,42 @@
+@page "/shows"
+@using ShowTrack.Shared.Models
+@using ShowTrack.Shared.Extensions
+@inject HttpClient Http
+
+<PageTitle>Shows Catalog</PageTitle>
+
+<h1>Shows Catalog</h1>
+
+<p>This component demonstrates fetching data from the server.</p>
+
+@if (shows == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    
+    <div class="search-bar mb-4 d-flex align-items-center">
+        <input type="text" placeholder="Search for shows.."             
+            class="form-control form-control-lg"  />
+        <button class="btn btn-lg btn-secondary ms-2">Search</button>
+    </div>
+
+    <div class="d-flex flex-wrap gap-3">
+        @foreach (var show in shows)
+        {
+            <ShowListItem show="@show" />
+        }
+    </div>
+}
+
+@code {
+    private Show[]? shows;
+
+    private string? searchString;
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.shows = await Http.GetFromJsonAsync<Show[]>("api/Shows");
+    }
+}
