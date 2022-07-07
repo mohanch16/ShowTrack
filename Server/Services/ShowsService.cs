@@ -35,4 +35,15 @@ public class ShowsService
 
     public async Task RemoveAsync(string id) =>
         await this.ShowsCollection.DeleteOneAsync(x => x.Id == id);
+    
+    public async Task<List<Show>> SearchShows(string title)
+    {
+        if (String.IsNullOrWhiteSpace(title)) 
+        {
+            return new List<Show>();
+        }
+        
+        var showTitleFilter = Builders<Show>.Filter.Eq("Title", title);
+        return await this.ShowsCollection.Find(showTitleFilter).ToListAsync();
+    }
 }
