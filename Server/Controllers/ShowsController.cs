@@ -81,8 +81,8 @@ public class ShowsController : ControllerBase
     }
 
     [HttpGet("search")]
-    public async Task<List<Show>> SearchShows(string showTitle)
+    public async Task<List<Show>> SearchShows(string showTitle, Shared.Models.ShowType showType)
     {
-        return await this.showsService.SearchShows(showTitle);        
+        return await this.showsService.SearchShows(showTitle, showType);        
     }
 }

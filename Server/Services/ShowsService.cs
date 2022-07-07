@@ -1,5 +1,6 @@
 
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using ShowTrack.Server.Models;
 // using ShowTrack.Shared.Models;
@@ -37,15 +38,21 @@ public class ShowsService
     
     #endregion
 
-    public async Task<List<Show>> SearchShows(string title)
+    public async Task<List<Show>> SearchShows(string title, Shared.Models.ShowType showType)
     {
-        if (String.IsNullOrWhiteSpace(title)) 
+        if (!String.IsNullOrWhiteSpace(title)) 
         {
-            return new List<Show>();
-        }
+            var filter = Builders<Show>.Filter.Regex("Title", new BsonRegularExpression(title, "i"));
+
+            if (showType != Shared.Models.ShowType.None)
+            {
+                filter &= Builders<Show>.Filter.Eq("Type", showType);
+            }
+
+            return await this.ShowsCollection.Find(filter).ToListAsync();
+        }        
         
-        var showTitleFilter = Builders<Show>.Filter.Eq("Title", title);
-        return await this.ShowsCollection.Find(showTitleFilter).ToListAsync();
+        return new List<Show>();        
     }
 
     public async Task<List<Show>> GetShowsByType(Shared.Models.ShowType showType)

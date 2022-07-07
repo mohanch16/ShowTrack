@@ -48,6 +48,13 @@ else
 
     public async Task SearchShows() 
     {
-        this.shows = await Http.GetFromJsonAsync<Show[]>($"api/Shows/search?showTitle={this.searchString}");        
+        if (this.showType != ShowType.None)
+        {     
+            this.shows = await Http.GetFromJsonAsync<Show[]>($"api/Shows/search?showTitle={this.searchString}&showType={this.showType}");
+        }
+        else 
+        {
+            this.shows = await Http.GetFromJsonAsync<Show[]>($"api/Shows/search?showTitle={this.searchString}");
+        }
     }
 }
