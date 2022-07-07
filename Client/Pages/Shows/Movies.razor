@@ -1,0 +1,20 @@
+@page "/movies"
+@using ShowTrack.Shared.Models
+@inject HttpClient Http
+
+<PageTitle>Movies Catalog</PageTitle>
+
+<h1>Movies Catalog</h1>
+
+<p>Movies across various video subscription services can be viewed in this page.</p>
+
+<ShowsList ShowType="@showType" />
+
+@code {
+    public ShowType showType { get; set; }
+
+    protected override void OnInitialized()
+    {
+        this.showType = ShowType.Movie;
+    }
+}

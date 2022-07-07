@@ -1,0 +1,20 @@
+@page "/tvshows"
+@using ShowTrack.Shared.Models
+@inject HttpClient Http
+
+<PageTitle>TV Shows Catalog</PageTitle>
+
+<h1>TV Shows Catalog</h1>
+
+<p>TV Shows across various video subscription services can be viewed in this page.</p>
+
+<ShowsList ShowType="@showType" />
+
+@code {
+    public ShowType showType { get; set; }
+
+    protected override void OnInitialized()
+    {
+        this.showType = ShowType.TVShow;
+    }
+}

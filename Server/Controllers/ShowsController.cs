@@ -15,8 +15,17 @@ public class ShowsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<List<Show>> GetShows() =>
-        await this.showsService.GetShows();
+    public async Task<List<Show>> GetShows(Shared.Models.ShowType showType) 
+    {
+        if (showType != Shared.Models.ShowType.None)
+        {
+            return await this.showsService.GetShowsByType(showType);            
+        }
+        else
+        {
+            return await this.showsService.GetShows();            
+        }
+    }
 
     [HttpGet("{id:length(24)}")]
     public async Task<ActionResult<Show>> GetShow(string id)
@@ -72,9 +81,8 @@ public class ShowsController : ControllerBase
     }
 
     [HttpGet("search")]
-    public async Task<List<Show>> SearchShows(string showTitle)
+    public async Task<List<Show>> SearchShows(string showTitle, Shared.Models.ShowType showType)
     {
-        var shows = await this.showsService.SearchShows(showTitle);
-        return shows;
+        return await this.showsService.SearchShows(showTitle, showType);        
     }
 }

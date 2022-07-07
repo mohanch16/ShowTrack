@@ -2,12 +2,6 @@
 @using ShowTrack.Shared.Models
 @inject HttpClient Http
 
-<PageTitle>Shows Catalog</PageTitle>
-
-<h1>Shows Catalog</h1>
-
-<p>This component demonstrates fetching data from the server.</p>
-
 @if (shows == null)
 {
     <p><em>Loading...</em></p>
@@ -33,19 +27,34 @@ else
 }
 
 @code {
+    [Parameter]
+    public ShowType showType { get; set; } = ShowType.None;
+    
     private Show[]? shows;
 
     private string? searchString { get; set; }
-
+    
     protected override async Task OnInitializedAsync()
     {
-        this.shows = await Http.GetFromJsonAsync<Show[]>("api/Shows");
+        if (this.showType != ShowType.None)
+        {                
+            this.shows = await Http.GetFromJsonAsync<Show[]>($"api/Shows?showType={this.showType}");            
+        }
+        else 
+        {
+            this.shows = await Http.GetFromJsonAsync<Show[]>("api/Shows");
+        }
     }
 
-    public async Task SearchShows() {
-        if (!String.IsNullOrWhiteSpace(this.searchString))
+    public async Task SearchShows() 
+    {
+        if (this.showType != ShowType.None)
+        {     
+            this.shows = await Http.GetFromJsonAsync<Show[]>($"api/Shows/search?showTitle={this.searchString}&showType={this.showType}");
+        }
+        else 
         {
-            this.shows = await Http.GetFromJsonAsync<Show[]>($"api/Shows/search?showTitle={this.searchString}");            
+            this.shows = await Http.GetFromJsonAsync<Show[]>($"api/Shows/search?showTitle={this.searchString}");
         }
     }
 }
