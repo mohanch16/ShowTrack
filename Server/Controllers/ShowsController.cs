@@ -70,4 +70,11 @@ public class ShowsController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpGet("search")]
+    public async Task<List<Show>> SearchShows(string showTitle)
+    {
+        var shows = await this.showsService.SearchShows(showTitle);
+        return shows;
+    }
 }

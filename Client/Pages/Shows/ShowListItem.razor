@@ -47,50 +47,6 @@
     </div>
 </div>
 
-@* 
-<div class="card w-320">
-    <div class="card-body">
-        <h5 class="card-title">@show.Title (@show.ReleaseYear)</h5>
-        <h6 class="mb-3">
-            <span class="badge bg-info">@((@show.Type).Description())</span>
-            <span class="badge bg-secondary">Rating: @show.Rating</span>
-        </h6>
-        <p class="card-text text-truncate-fade overflow-hidden">
-            @show.Description
-        </p>
-        <p class="card-text">                        
-            <span>Cast: </span>
-            @if (@show.Cast?.Length > 0) 
-            {
-                <span>@String.Join(", ", @show.Cast)</span>
-            }
-            else
-            {
-                <span class="text-muted text-secondary">Not Available</span>
-            }
-        </p>        
-        <p class="card-text gap-1">                        
-            <span class="me-1">Categories: </span>
-            @if (@show.Categories?.Length > 0) 
-            {
-                <span class="d-inline-flex flex-wrap gap-1">
-                    @foreach (var category in @show.Categories) 
-                    {
-                        <span class="badge bg-light rounded-pill border text-secondary">
-                            @category
-                        </span>
-                    }
-                </span>
-            }
-            else
-            {
-                <span class="text-muted text-secondary">Not Available</span>
-            }
-        </p>        
-        <a href="#" class="btn btn-primary w-100 text-center" role="button">View details</a>
-    </div>
-</div> *@
-
 @code {
     [Parameter]
     public Show show {get; set; } = null!;
