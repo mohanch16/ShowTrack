@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using ShowTrack.Server.Models;
+// using ShowTrack.Shared.Models;
 
 namespace ShowTrack.Server.Services;
 
@@ -16,11 +17,9 @@ public class ShowsService
         var database = mongoClient.GetDatabase(settings.DatabaseName);  
         this.ShowsCollection = database.GetCollection<Show>(settings.CollectionName);       
     }
-
-    public async Task<List<Show>> GetShows()
-    {
-        return await this.ShowsCollection.Find(_ => true).ToListAsync();
-    }
+    #region Basic CRUD Operations
+    public async Task<List<Show>> GetShows() => 
+        await this.ShowsCollection.Find(_ => true).ToListAsync();    
 
     public async Task<Show> GetShow(string id)
     {
@@ -36,6 +35,8 @@ public class ShowsService
     public async Task RemoveAsync(string id) =>
         await this.ShowsCollection.DeleteOneAsync(x => x.Id == id);
     
+    #endregion
+
     public async Task<List<Show>> SearchShows(string title)
     {
         if (String.IsNullOrWhiteSpace(title)) 
@@ -45,5 +46,11 @@ public class ShowsService
         
         var showTitleFilter = Builders<Show>.Filter.Eq("Title", title);
         return await this.ShowsCollection.Find(showTitleFilter).ToListAsync();
+    }
+
+    public async Task<List<Show>> GetShowsByType(Shared.Models.ShowType showType)
+    {
+        var showTypeFilter = Builders<Show>.Filter.Eq("Type", showType);
+        return await this.ShowsCollection.Find(showTypeFilter).ToListAsync();
     }
 }
