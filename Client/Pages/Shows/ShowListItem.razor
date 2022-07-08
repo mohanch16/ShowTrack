@@ -1,7 +1,7 @@
 @using ShowTrack.Shared.Models
 @using ShowTrack.Shared.Extensions
 
-<div class="card w-320">
+<div class="card w-350">
     <div class="card-body">
         <h5 class="card-title">@show.Title (@show.ReleaseYear)</h5>
         <h6 class="mb-3">
@@ -15,7 +15,7 @@
             <span>Cast: </span>
             @if (@show.Cast?.Length > 0) 
             {
-                <span class="small">@String.Join(", ", @show.Cast)</span>
+                <span>@String.Join(", ", @show.Cast)</span>
             }
             else
             {
@@ -49,5 +49,5 @@
 
 @code {
     [Parameter]
-    public Show show {get; set; } = null!;
+    public Show show { get; set; } = null!;
 }
