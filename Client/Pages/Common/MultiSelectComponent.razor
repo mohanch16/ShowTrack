@@ -1,0 +1,51 @@
+@using ShowTrack.Shared.Models.AsyncFilters
+
+@namespace ShowTrack.Components.Common
+
+<MudSelect T="FilterItem" MultiSelection="true" 
+    SelectAll="true" SelectAllText="Select all" 
+    SelectedValues="new HashSet<FilterItem>(Config)"
+    ToStringFunc="@converter" Label="@Label" 
+    AnchorOrigin="Origin.BottomCenter" 
+    Variant="Variant.Outlined" Clearable>
+    @foreach (var filterListItem in DropDownList) 
+    {
+        <MudSelectItem Value="@filterListItem" />
+    }
+</MudSelect>
+
+@code {
+    [Parameter]
+    public List<FilterItem> Config { get; set; } = null!;
+    
+    [Parameter]
+    public List<FilterItem> DropDownList { get; set; } = null!;
+    
+    [Parameter]
+    public string Label { get; set; } = null!;
+
+    [Parameter]
+    public EventCallback<List<FilterItem>> ConfigChanged { get; set; }
+    
+    
+    private void SelectedValuesChanged(HashSet<FilterItem> val) {
+        var v = new List<FilterItem>(val);
+        if (!this.isEqual(v, Config))
+        {
+            Config = v; 
+            this.ConfigChanged.InvokeAsync(Config);
+        }
+        else
+        {
+            Console.WriteLine("equals");
+        }
+    }
+
+    private bool isEqual<T>(List<T> one, List<T> two) where T : FilterItem
+    {
+        return one.Count() == two.Count() 
+        && one.Count(two.Contains) == two.Count();   
+    }
+
+    Func<FilterItem, string> converter = p => p?.Name!;
+}

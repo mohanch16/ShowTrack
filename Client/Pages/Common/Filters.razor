@@ -1,0 +1,69 @@
+@using ShowTrack.Shared.Models
+@using ShowTrack.Shared.Extensions
+@using ShowTrack.Shared.Models.AsyncFilters
+@using ShowTrack.Components.Common
+
+@namespace ShowTrack.Components.Common
+
+<div class="my-4 d-flex">
+
+    <div class="col-sm-6 col-md-4 col-lg-3">
+        <MultiSelectComponent Config="showTypes"
+            DropDownList="showTypes" Label="Show type"        
+            ConfigChanged="OnShowTypeSelectionChanged">
+        </MultiSelectComponent>
+    </div>
+
+    <div class="col-sm-6 col-md-4 col-lg-3">
+        <MultiSelectComponent Config="subscriptionTypes"
+            DropDownList="subscriptionTypes" Label="Subscriptions"        
+            ConfigChanged="OnSubscriptionTypeSelectionChanged">
+        </MultiSelectComponent>
+    </div>
+
+</div>
+@code {
+    public List<FilterItem> showTypes { get; set; } = new List<FilterItem>();
+    public List<FilterItem> subscriptionTypes { get; set; } = new List<FilterItem>();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        this.BuildFilterItems();
+    }
+    
+    public void OnShowTypeSelectionChanged(List<FilterItem> updatedValues)
+    {
+        updatedValues.ForEach(fi => Console.WriteLine(fi.Value));  
+    }
+
+    public void OnSubscriptionTypeSelectionChanged(List<FilterItem> updatedValues) 
+    {
+        updatedValues.ForEach(fi => Console.WriteLine(fi.Value));  
+    }
+
+    private void BuildFilterItems() 
+    {
+        var showTypes = Extensions.GetFilteredEnumValues<ShowType>(
+            excludeItems: new ShowType[] { ShowType.None }).ToList();
+        showTypes.ForEach(showType => 
+        {
+            this.showTypes.Add(new FilterItem 
+            {
+                Name = showType.Description(),
+                Value = (int)showType,
+            });
+        });
+
+        var subscriptionTypes = Extensions.GetFilteredEnumValues<SubscriptionType>(
+            excludeItems: new SubscriptionType[] { SubscriptionType.None }).ToList();
+        subscriptionTypes.ForEach(subscriptionType => 
+        {
+            this.subscriptionTypes.Add(new FilterItem 
+            {
+                Name = subscriptionType.Description(),
+                Value = (int)subscriptionType,
+            });
+        });
+    }
+}
