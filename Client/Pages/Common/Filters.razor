@@ -15,19 +15,23 @@
     <div class="d-flex justify-content-between flex-wrap gap-3 my-3">
         
         <div class="d-flex gap-3 flex-wrap">
-            <div class="col-sm-10 col-md-8 col-lg-5">
-                <MudSelect T="@FilterItem" MultiSelection="true" 
-                    SelectAll="true" SelectAllText="Select all" 
-                    @bind-SelectedValues="FilterOptions.SelectedShowTypes"
-                    ToStringFunc="@converter" Label="Shows type" 
-                    AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Clearable>
-                    @foreach (var filterListItem in showTypes) 
-                    {
-                        <MudSelectItem Value="@filterListItem" />
-                    }
-                </MudSelect>
-            </div>
-            <div class="col-sm-10 col-md-8 col-lg-5">
+            @if (this.ForShowType == ShowType.None)
+            {
+                <div>
+                    <MudSelect T="@FilterItem" MultiSelection="true" 
+                        SelectAll="true" SelectAllText="Select all" 
+                        @bind-SelectedValues="FilterOptions.SelectedShowTypes"
+                        ToStringFunc="@converter" Label="Shows type" 
+                        AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Clearable>
+                        @foreach (var filterListItem in showTypes) 
+                        {
+                            <MudSelectItem Value="@filterListItem" />
+                        }
+                    </MudSelect>
+                </div>
+            }
+
+            <div>
                 <MudSelect T="@FilterItem" MultiSelection="true" 
                     SelectAll="true" SelectAllText="Select all" 
                     @bind-SelectedValues="FilterOptions.SelectedSubscriptions"
@@ -66,6 +70,9 @@
     public List<FilterItem> subscriptionTypes { get; set; } = new List<FilterItem>();
     
     [Parameter]
+    public ShowType ForShowType { get; set; }
+    
+    [Parameter]
     public FilterOptions FilterOptions { get; set; } = new FilterOptions();
     
     [Parameter]
@@ -79,29 +86,52 @@
         this.BuildFilterItems();
     }
 
-    public async Task SubmitFilterOptions()
+    private async Task SubmitFilterOptions()
     {
-        var showsSelected = FilterOptions.SelectedShowTypes.Select(st => st.Value).ToList();
-        
-        // Console.WriteLine($"{(showsSelected.Count > 0 ? showsSelected.First() : 0)} selected");
+        // TODO: Adding validations [invoking callback function if only filters are changed].   
         await this.OnApplyFilters.InvokeAsync(this.FilterOptions);
     }
 
     private void BuildFilterItems() 
     {
-        var _showTypes = Extensions.GetFilteredEnumValues<ShowType>(
-            excludeItems: new ShowType[] { ShowType.None }).ToList();
-        _showTypes.ForEach(showType => 
-        {
-            this.showTypes.Add(new FilterItem 
-            {
-                Name = showType.Description(),
-                Value = (int)showType,
-            });
-        });
+        this.BuildShowTypeFilters();
+        this.BuildSubscriptionFilters();
+    }       
 
-        var _subscriptionTypes = Extensions.GetFilteredEnumValues<SubscriptionType>(
-            excludeItems: new SubscriptionType[] { SubscriptionType.None }).ToList();
+    private void BuildShowTypeFilters()
+    {
+        if (this.ForShowType != ShowType.None)   
+        {
+            this.showTypes = new List<FilterItem> 
+            {
+                new FilterItem 
+                {
+                    Name = this.ForShowType.Description(),
+                    Value = (int)this.ForShowType
+                }
+            };
+        }
+        else
+        {
+            var excludeShowTypes = new ShowType[] { ShowType.None };
+            var _showTypes = Extensions.GetFilteredEnumValues<ShowType>(excludeShowTypes).ToList();
+            _showTypes.ForEach(showType => 
+            {
+                this.showTypes.Add(new FilterItem 
+                {
+                    Name = showType.Description(),
+                    Value = (int)showType,
+                });
+            });
+        }
+
+        this.FilterOptions.SelectedShowTypes = new List<FilterItem>(this.showTypes);        
+    }
+
+    private void BuildSubscriptionFilters()
+    {
+        var excludeSubscriptions = new SubscriptionType[] { SubscriptionType.None };        
+        var _subscriptionTypes = Extensions.GetFilteredEnumValues<SubscriptionType>(excludeSubscriptions).ToList();
         _subscriptionTypes.ForEach(subscriptionType => 
         {
             this.subscriptionTypes.Add(new FilterItem 
@@ -111,7 +141,6 @@
             });
         });
 
-        this.FilterOptions.SelectedShowTypes = new List<FilterItem>(this.showTypes);
-        this.FilterOptions.SelectedSubscriptions = new List<FilterItem>(this.subscriptionTypes);        
+        this.FilterOptions.SelectedSubscriptions = new List<FilterItem>(this.subscriptionTypes);
     }
 }
