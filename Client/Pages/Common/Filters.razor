@@ -5,41 +5,58 @@
 
 @namespace ShowTrack.Components.Common
 
-<div class="my-4 d-flex">
+<MudPaper Class="px-8 py-2 my-4" Elevation="2">
+    <div class="my-4 d-flex justify-content-between flex-wrap">
+        
+        <div class="d-flex gap-3 flex-wrap">
+            <div class="col-sm-6 col-md-4 col-lg-3">
+                <MultiSelectComponent Config="showTypes"
+                    DropDownList="showTypes" Label="Show type"        
+                    ConfigChanged="@OnShowTypeSelectionChanged">
+                </MultiSelectComponent>
+            </div>
+            <div class="col-sm-6 col-md-4 col-lg-3">
+                <MultiSelectComponent Config="subscriptionTypes"
+                    DropDownList="subscriptionTypes" Label="Subscriptions"        
+                    ConfigChanged="@OnSubscriptionTypeSelectionChanged">
+                </MultiSelectComponent>
+            </div>
+        </div>
 
-    <div class="col-sm-6 col-md-4 col-lg-3">
-        <MultiSelectComponent Config="showTypes"
-            DropDownList="showTypes" Label="Show type"        
-            ConfigChanged="OnShowTypeSelectionChanged">
-        </MultiSelectComponent>
+        <div class="search-bar d-flex align-items-center gap-3">
+            <input type="text"  
+                class="form-control form-control-lg" 
+                @bind-value="@searchString" 
+                @bind-value:event="oninput" 
+                placeholder="Search for shows.."  />
+            <button class="btn btn-lg btn-secondary ms-2" @onclick="() => OnApplyFilters.InvokeAsync(searchString)">Apply Filters</button>
+        </div>
+
     </div>
-
-    <div class="col-sm-6 col-md-4 col-lg-3">
-        <MultiSelectComponent Config="subscriptionTypes"
-            DropDownList="subscriptionTypes" Label="Subscriptions"        
-            ConfigChanged="OnSubscriptionTypeSelectionChanged">
-        </MultiSelectComponent>
-    </div>
-
-</div>
+</MudPaper>
 @code {
     public List<FilterItem> showTypes { get; set; } = new List<FilterItem>();
     public List<FilterItem> subscriptionTypes { get; set; } = new List<FilterItem>();
+        
+    [Parameter] 
+    public string? searchString { get; set; }
     
+    [Parameter]
+    public EventCallback<string> OnApplyFilters { get; set; }
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         this.BuildFilterItems();
     }
     
-    public void OnShowTypeSelectionChanged(List<FilterItem> updatedValues)
+    public void OnShowTypeSelectionChanged(IEnumerable<FilterItem> updatedValues)
     {
-        updatedValues.ForEach(fi => Console.WriteLine(fi.Value));  
+        updatedValues.ToList().ForEach(fi => Console.WriteLine(fi.Value));  
     }
 
-    public void OnSubscriptionTypeSelectionChanged(List<FilterItem> updatedValues) 
+    public void OnSubscriptionTypeSelectionChanged(IEnumerable<FilterItem> updatedValues) 
     {
-        updatedValues.ForEach(fi => Console.WriteLine(fi.Value));  
+        updatedValues.ToList().ForEach(fi => Console.WriteLine(fi.Value));  
     }
 
     private void BuildFilterItems() 

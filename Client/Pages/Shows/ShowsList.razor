@@ -11,17 +11,7 @@
 }
 else
 { 
-    <div class="search-bar mb-4 d-flex align-items-center">
-        <input type="text"  
-            class="form-control" 
-            @bind-value="@searchString" 
-            @bind-value:event="oninput" 
-            placeholder="Search for shows.."  />
-
-        <button class="btn btn-secondary ms-2" @onclick="SearchShows">Search</button>
-    </div>
-
-    <Filters></Filters>
+    <Filters searchString="" OnApplyFilters="@SearchShows"></Filters>
 
     <div class="d-flex flex-wrap gap-3 mb-4">
         @foreach (var show in shows)
@@ -59,8 +49,6 @@ else
     
     private Show[]? shows;
 
-    private string? searchString { get; set; }
-    
     protected override async Task OnInitializedAsync()
     {
         if (this.showType != ShowType.None)
@@ -73,15 +61,17 @@ else
         }
     }
 
-    public async Task SearchShows() 
+    public async Task SearchShows(string searchString) 
     {
+        if (string.IsNullOrWhiteSpace(searchString)) return;
+
         if (this.showType != ShowType.None)
         {     
-            this.shows = await Http.GetFromJsonAsync<Show[]>($"api/Shows/search?showTitle={this.searchString}&showType={this.showType}");
+            this.shows = await Http.GetFromJsonAsync<Show[]>($"api/Shows/search?showTitle={searchString}&showType={this.showType}");
         }
         else 
         {
-            this.shows = await Http.GetFromJsonAsync<Show[]>($"api/Shows/search?showTitle={this.searchString}");
+            this.shows = await Http.GetFromJsonAsync<Show[]>($"api/Shows/search?showTitle={searchString}");
         }
     }
 }

@@ -13,7 +13,7 @@ public class FilterItem
     public int Value { get; set; }
 
     // Note: this is important so the select can compare filteritems
-    public override bool Equals(object o = null!) {
+    public override bool Equals(object? o) {
         var other = o as FilterItem;
         return other?.Value==Value;
     }

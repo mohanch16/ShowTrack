@@ -2,9 +2,10 @@
 
 @namespace ShowTrack.Components.Common
 
-<MudSelect T="FilterItem" MultiSelection="true" 
+<MudSelect T="@FilterItem" MultiSelection="true" 
     SelectAll="true" SelectAllText="Select all" 
     SelectedValues="new HashSet<FilterItem>(Config)"
+    SelectedValuesChanged="ConfigChanged"
     ToStringFunc="@converter" Label="@Label" 
     AnchorOrigin="Origin.BottomCenter" 
     Variant="Variant.Outlined" Clearable>
@@ -25,26 +26,12 @@
     public string Label { get; set; } = null!;
 
     [Parameter]
-    public EventCallback<List<FilterItem>> ConfigChanged { get; set; }
-    
+    public EventCallback<IEnumerable<FilterItem>> ConfigChanged { get; set; }
     
     private void SelectedValuesChanged(HashSet<FilterItem> val) {
         var v = new List<FilterItem>(val);
-        if (!this.isEqual(v, Config))
-        {
-            Config = v; 
-            this.ConfigChanged.InvokeAsync(Config);
-        }
-        else
-        {
-            Console.WriteLine("equals");
-        }
-    }
-
-    private bool isEqual<T>(List<T> one, List<T> two) where T : FilterItem
-    {
-        return one.Count() == two.Count() 
-        && one.Count(two.Contains) == two.Count();   
+        Config = v; 
+        this.ConfigChanged.InvokeAsync(Config);        
     }
 
     Func<FilterItem, string> converter = p => p?.Name!;
