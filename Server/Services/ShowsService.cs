@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using ShowTrack.Server.Models;
+using ShowTrack.Shared.Models;
 using ShowTrack.Shared.Models.AsyncFilters;
 
 namespace ShowTrack.Server.Services;
@@ -18,6 +19,7 @@ public class ShowsService
         var database = mongoClient.GetDatabase(settings.DatabaseName);  
         this.ShowsCollection = database.GetCollection<Show>(settings.CollectionName);       
     }
+    
     #region Basic CRUD Operations
     public async Task<List<Show>> GetShows() => 
         await this.ShowsCollection.Find(_ => true).ToListAsync();    
@@ -38,13 +40,13 @@ public class ShowsService
     
     #endregion
 
-    public async Task<List<Show>> SearchShows(string title, Shared.Models.ShowType showType)
+    public async Task<List<Show>> SearchShows(string title, ShowType showType)
     {
         if (!String.IsNullOrWhiteSpace(title)) 
         {
             var filter = Builders<Show>.Filter.Regex("Title", new BsonRegularExpression(title, "i"));
 
-            if (showType != Shared.Models.ShowType.None)
+            if (showType != ShowType.None)
             {
                 filter &= Builders<Show>.Filter.Eq("Type", showType);
             }
@@ -55,7 +57,7 @@ public class ShowsService
         return new List<Show>();        
     }
 
-    public async Task<List<Show>> GetShowsByType(Shared.Models.ShowType showType)
+    public async Task<List<Show>> GetShowsByType(ShowType showType)
     {
         var showTypeFilter = Builders<Show>.Filter.Eq("Type", showType);
         return await this.ShowsCollection.Find(showTypeFilter).ToListAsync();

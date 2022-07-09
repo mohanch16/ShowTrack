@@ -2,6 +2,7 @@ using ShowTrack.Server.Models;
 using ShowTrack.Server.Services;
 using ShowTrack.Shared.Models.AsyncFilters;
 using Microsoft.AspNetCore.Mvc;
+using ShowTrack.Shared.Models;
 
 namespace ShowTrack.Server.Controllers;
 
@@ -16,9 +17,9 @@ public class ShowsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<List<Show>> GetShows(Shared.Models.ShowType showType) 
+    public async Task<List<Show>> GetShows(ShowType showType) 
     {
-        if (showType != Shared.Models.ShowType.None)
+        if (showType != ShowType.None)
         {
             return await this.showsService.GetShowsByType(showType);            
         }
@@ -82,7 +83,7 @@ public class ShowsController : ControllerBase
     }
 
     [HttpGet("search")]
-    public async Task<List<Show>> SearchShows(string showTitle, Shared.Models.ShowType showType)
+    public async Task<List<Show>> SearchShows(string showTitle, ShowType showType)
     {
         return await this.showsService.SearchShows(showTitle, showType);        
     }
