@@ -79,12 +79,15 @@ a, .btn-link {
     background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 50%);
 }
 
-.w-350 {
-    width: 350px;
+.card-width {
+    width: 300px;
 }
 
-@media only screen and (max-width: 600px) {
-    /* For mobiles: */   
+@media only screen and (max-width: 650px) {
+    /* For mobiles: */ 
+    .card-width {
+        width: 350px;
+    }  
 }
 
 @media only screen and (min-width: 601px) {

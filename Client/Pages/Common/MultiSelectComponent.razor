@@ -4,11 +4,10 @@
 
 <MudSelect T="@FilterItem" MultiSelection="true" 
     SelectAll="true" SelectAllText="Select all" 
-    SelectedValues="new HashSet<FilterItem>(Config)"
-    SelectedValuesChanged="ConfigChanged"
+    SelectedValues="@Config"
+    OnBlur="@(async () => await ConfigChanged.InvokeAsync(Config))"
     ToStringFunc="@converter" Label="@Label" 
-    AnchorOrigin="Origin.BottomCenter" 
-    Variant="Variant.Outlined" Clearable>
+    AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Clearable>
     @foreach (var filterListItem in DropDownList) 
     {
         <MudSelectItem Value="@filterListItem" />
@@ -21,18 +20,12 @@
     
     [Parameter]
     public List<FilterItem> DropDownList { get; set; } = null!;
-    
+     
     [Parameter]
     public string Label { get; set; } = null!;
 
     [Parameter]
-    public EventCallback<IEnumerable<FilterItem>> ConfigChanged { get; set; }
-    
-    private void SelectedValuesChanged(HashSet<FilterItem> val) {
-        var v = new List<FilterItem>(val);
-        Config = v; 
-        this.ConfigChanged.InvokeAsync(Config);        
-    }
+    public EventCallback<List<FilterItem>> ConfigChanged { get; set; }    
 
     Func<FilterItem, string> converter = p => p?.Name!;
 }

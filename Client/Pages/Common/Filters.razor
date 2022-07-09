@@ -5,38 +5,57 @@
 
 @namespace ShowTrack.Components.Common
 
-<MudPaper Class="px-8 py-2 my-4" Elevation="2">
-    <div class="my-4 d-flex justify-content-between flex-wrap">
+<div class="border my-4 px-4 py-2 rounded-lg shadow-sm">
+    <MudItem Class="d-flex align-items-center">
+        <MudIcon Icon="@Icons.Filled.FilterList" Color="Color.Dark" />
+        <MudText Typo="Typo.h6" Class="mx-2">Filters</MudText>
+        <MudIcon Icon="@Icons.Filled.FilterAlt" Color="Color.Dark" />
+    </MudItem>
+
+    <div class="d-flex justify-content-between flex-wrap gap-3 my-2">
         
         <div class="d-flex gap-3 flex-wrap">
-            <div class="col-sm-6 col-md-4 col-lg-3">
-                <MultiSelectComponent Config="showTypes"
-                    DropDownList="showTypes" Label="Show type"        
+            <div class="col-sm-10 col-md-8 col-lg-5">
+                <MultiSelectComponent Config="selectedShowTypes"                   
+                    DropDownList="showTypes" Label="Show type"                     
                     ConfigChanged="@OnShowTypeSelectionChanged">
                 </MultiSelectComponent>
             </div>
-            <div class="col-sm-6 col-md-4 col-lg-3">
-                <MultiSelectComponent Config="subscriptionTypes"
-                    DropDownList="subscriptionTypes" Label="Subscriptions"        
+            <div class="col-sm-10 col-md-8 col-lg-5">
+                <MultiSelectComponent Config="selectedSubscriptionTypes"
+                    DropDownList="subscriptionTypes" Label="Subscriptions"                      
                     ConfigChanged="@OnSubscriptionTypeSelectionChanged">
                 </MultiSelectComponent>
             </div>
         </div>
 
-        <div class="search-bar d-flex align-items-center gap-3">
-            <input type="text"  
-                class="form-control form-control-lg" 
-                @bind-value="@searchString" 
-                @bind-value:event="oninput" 
-                placeholder="Search for shows.."  />
-            <button class="btn btn-lg btn-secondary ms-2" @onclick="() => OnApplyFilters.InvokeAsync(searchString)">Apply Filters</button>
+        <div class="search-bar d-flex align-items-center gap-3">            
+            <MudTextField @bind-Value="@searchString" 
+                Label="Search by title" Variant="Variant.Outlined" 
+                Adornment="Adornment.End" Placeholder="Search for shows.."
+                AdornmentIcon="@Icons.Filled.Search"  />            
+        </div>
+
+        <div class="d-flex align-items-center gap-3 justify-content-end">
+            <MudFab EndIcon="@Icons.Filled.FilterListOff" Label="Clear" 
+                Class="border-secondary text-secondary" Size="Size.Large" 
+                Color="Color.Default"
+                OnClick="() => RefreshFilters()" Variant="Variant.Outlined"  />
+
+            <MudFab EndIcon="@Icons.Filled.FilterList" Label="Apply" 
+                Class="bg-secondary text-white" Size="Size.Large" 
+                OnClick="() => OnApplyFilters.InvokeAsync(searchString)" />
         </div>
 
     </div>
-</MudPaper>
+</div>
+
 @code {
     public List<FilterItem> showTypes { get; set; } = new List<FilterItem>();
     public List<FilterItem> subscriptionTypes { get; set; } = new List<FilterItem>();
+        
+    public List<FilterItem> selectedShowTypes { get; set; } = new List<FilterItem>();
+    public List<FilterItem> selectedSubscriptionTypes { get; set; } = new List<FilterItem>();
         
     [Parameter] 
     public string? searchString { get; set; }
@@ -49,21 +68,27 @@
         this.BuildFilterItems();
     }
     
-    public void OnShowTypeSelectionChanged(IEnumerable<FilterItem> updatedValues)
+    public void OnShowTypeSelectionChanged(List<FilterItem> updatedValues)
     {
-        updatedValues.ToList().ForEach(fi => Console.WriteLine(fi.Value));  
+        updatedValues.ToList().ForEach(fi => Console.WriteLine(fi.Name));  
     }
 
-    public void OnSubscriptionTypeSelectionChanged(IEnumerable<FilterItem> updatedValues) 
+    public void OnSubscriptionTypeSelectionChanged(List<FilterItem> updatedValues) 
     {
-        updatedValues.ToList().ForEach(fi => Console.WriteLine(fi.Value));  
+        updatedValues.ToList().ForEach(fi => Console.WriteLine(fi.Name));  
+    }
+
+    private void RefreshFilters()
+    {
+        this.selectedShowTypes = new List<FilterItem>();
+        this.selectedSubscriptionTypes = new List<FilterItem>();
     }
 
     private void BuildFilterItems() 
     {
-        var showTypes = Extensions.GetFilteredEnumValues<ShowType>(
+        var _showTypes = Extensions.GetFilteredEnumValues<ShowType>(
             excludeItems: new ShowType[] { ShowType.None }).ToList();
-        showTypes.ForEach(showType => 
+        _showTypes.ForEach(showType => 
         {
             this.showTypes.Add(new FilterItem 
             {
@@ -72,9 +97,9 @@
             });
         });
 
-        var subscriptionTypes = Extensions.GetFilteredEnumValues<SubscriptionType>(
+        var _subscriptionTypes = Extensions.GetFilteredEnumValues<SubscriptionType>(
             excludeItems: new SubscriptionType[] { SubscriptionType.None }).ToList();
-        subscriptionTypes.ForEach(subscriptionType => 
+        _subscriptionTypes.ForEach(subscriptionType => 
         {
             this.subscriptionTypes.Add(new FilterItem 
             {
@@ -82,5 +107,8 @@
                 Value = (int)subscriptionType,
             });
         });
+
+        this.selectedShowTypes = new List<FilterItem>(this.showTypes);
+        this.selectedSubscriptionTypes = new List<FilterItem>(this.subscriptionTypes);
     }
 }
