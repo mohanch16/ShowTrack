@@ -1,0 +1,31 @@
+@using ShowTrack.Shared.Models.AsyncFilters
+
+@namespace ShowTrack.Components.Common
+
+<MudSelect T="@FilterItem" MultiSelection="true" 
+    SelectAll="true" SelectAllText="Select all" 
+    SelectedValues="@Config"
+    OnBlur="@(async () => await ConfigChanged.InvokeAsync(Config))"
+    ToStringFunc="@converter" Label="@Label" 
+    AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Clearable>
+    @foreach (var filterListItem in DropDownList) 
+    {
+        <MudSelectItem Value="@filterListItem" />
+    }
+</MudSelect>
+
+@code {
+    [Parameter]
+    public List<FilterItem> Config { get; set; } = null!;
+    
+    [Parameter]
+    public List<FilterItem> DropDownList { get; set; } = null!;
+     
+    [Parameter]
+    public string Label { get; set; } = null!;
+
+    [Parameter]
+    public EventCallback<List<FilterItem>> ConfigChanged { get; set; }    
+
+    Func<FilterItem, string> converter = p => p?.Name!;
+}

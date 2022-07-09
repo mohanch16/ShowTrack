@@ -66,7 +66,7 @@ a, .btn-link {
 /* custom css snippet to text truncate with fading by color */
 .text-truncate-fade {
     position: relative;
-    height: 4.6rem; /* exactly three lines */
+    height: 3.6rem; /* exactly three lines */
 }
 .text-truncate-fade:after {
     content: "";
@@ -79,14 +79,15 @@ a, .btn-link {
     background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 50%);
 }
 
-.w-320 {
-    width: 320px;
+.card-width {
+    width: 300px;
 }
 
-@media only screen and (max-width: 600px) {
-    .w-320 {
+@media only screen and (max-width: 650px) {
+    /* For mobiles: */ 
+    .card-width {
         width: 350px;
-    }
+    }  
 }
 
 @media only screen and (min-width: 601px) {

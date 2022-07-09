@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using ShowTrack.Server.Models;
-// using ShowTrack.Shared.Models;
+using ShowTrack.Shared.Models.AsyncFilters;
 
 namespace ShowTrack.Server.Services;
 
@@ -59,5 +59,48 @@ public class ShowsService
     {
         var showTypeFilter = Builders<Show>.Filter.Eq("Type", showType);
         return await this.ShowsCollection.Find(showTypeFilter).ToListAsync();
+    }
+
+    public async Task<List<Show>> FilterShows(FilterOptionsDTO filteredOptions)
+    {
+        /**
+         * Reference: https://mongodb.github.io/mongo-csharp-driver/2.16/reference/driver/definitions/ 
+         */
+        FilterDefinition<Show>? filterDef = null;
+        if (!String.IsNullOrWhiteSpace(filteredOptions.SearchString)) 
+        {
+            filterDef = Builders<Show>.Filter.Regex(widget => widget.Title, new BsonRegularExpression(filteredOptions.SearchString, "i"));
+        }
+    
+        if (filteredOptions.SelectedShowTypes.Any())
+        {
+            if (filterDef != null)
+            {
+                filterDef &= Builders<Show>.Filter.In(widget => widget.Type, filteredOptions.SelectedShowTypes);
+            }
+            else
+            {
+                filterDef = Builders<Show>.Filter.In(widget => widget.Type, filteredOptions.SelectedShowTypes);
+            }
+        }            
+
+        if (filteredOptions.SelectedSubscriptions.Any())
+        {
+            if (filterDef != null)
+            {
+                filterDef &= Builders<Show>.Filter.In(widget => widget.SubscriptionType, filteredOptions.SelectedSubscriptions);                    
+            }
+            else
+            {
+                filterDef = Builders<Show>.Filter.In(widget => widget.SubscriptionType, filteredOptions.SelectedSubscriptions);
+            }
+        }
+
+        if (filterDef != null)
+        {
+            return await this.ShowsCollection.Find(filterDef).ToListAsync();            
+        }
+        
+        return await this.ShowsCollection.Find(_ => true).ToListAsync();
     }
 }
