@@ -1,5 +1,6 @@
 using ShowTrack.Server.Models;
 using ShowTrack.Server.Services;
+using ShowTrack.Shared.Models.AsyncFilters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ShowTrack.Server.Controllers;
@@ -84,5 +85,11 @@ public class ShowsController : ControllerBase
     public async Task<List<Show>> SearchShows(string showTitle, Shared.Models.ShowType showType)
     {
         return await this.showsService.SearchShows(showTitle, showType);        
+    }
+
+    [HttpPost("filter")]
+    public async Task<List<Show>> GetFilteredShows([FromBody] FilterOptionsDTO filteredOptions)
+    {
+        return await this.showsService.FilterShows(filteredOptions);        
     }
 }

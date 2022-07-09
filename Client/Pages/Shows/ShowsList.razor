@@ -1,23 +1,31 @@
 @page "/shows"
 @using ShowTrack.Shared.Models
+@using ShowTrack.Shared.Models.AsyncFilters
 @using ShowTrack.Components.Common
+@using System.Text.Json
 @inject HttpClient Http
 
 @namespace ShowTrack.Components.Shows
 
 @if (shows == null)
 {
-    <p><em>Loading...</em></p>
+    <p><em>Loading...</em></p>    
 }
 else
 { 
-    <Filters searchString="" OnApplyFilters="@SearchShows"></Filters>
+    <Filters FilterOptions="@FilterOptions" OnApplyFilters="@SearchShows"></Filters>
 
     <MudPaper Elevation="2" Class="p-4 mb-4">
         <div class="d-flex flex-wrap gap-3">
             @foreach (var show in shows)
             {
                 <ShowListItem show="@show" />
+            }
+            @if (shows.Count() == 0)
+            {
+                <MudAlert Severity="Severity.Info" Class="flex-grow-1">
+                    No results found.
+                </MudAlert>
             }
         </div>
     </MudPaper>    
@@ -49,6 +57,10 @@ else
     [Parameter]
     public ShowType showType { get; set; } = ShowType.None;
     
+    public FilterOptions FilterOptions { get; set; } = new FilterOptions();
+     
+    public FilterOptionsDTO UpdatedFilterOptions { get; set; } = new FilterOptionsDTO();
+    
     private Show[]? shows;
 
     protected override async Task OnInitializedAsync()
@@ -63,17 +75,14 @@ else
         }
     }
 
-    public async Task SearchShows(string searchString) 
+    public async Task SearchShows(FilterOptions filterOptions) 
     {
-        if (string.IsNullOrWhiteSpace(searchString)) return;
+        // if (string.IsNullOrWhiteSpace(filterOptions?.SearchString)) return;
 
-        if (this.showType != ShowType.None)
-        {     
-            this.shows = await Http.GetFromJsonAsync<Show[]>($"api/Shows/search?showTitle={searchString}&showType={this.showType}");
-        }
-        else 
-        {
-            this.shows = await Http.GetFromJsonAsync<Show[]>($"api/Shows/search?showTitle={searchString}");
-        }
+        this.UpdatedFilterOptions = filterOptions.BuildDataTransferObject();        
+        Console.WriteLine(JsonSerializer.Serialize(this.UpdatedFilterOptions));
+
+        var response = await Http.PostAsJsonAsync<FilterOptionsDTO>($"api/Shows/filter", this.UpdatedFilterOptions);
+        this.shows = await response.Content.ReadFromJsonAsync<Show[]>(); 
     }
 }

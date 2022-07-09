@@ -16,21 +16,32 @@
         
         <div class="d-flex gap-3 flex-wrap">
             <div class="col-sm-10 col-md-8 col-lg-5">
-                <MultiSelectComponent Config="selectedShowTypes"                   
-                    DropDownList="showTypes" Label="Show type"                     
-                    ConfigChanged="@OnShowTypeSelectionChanged">
-                </MultiSelectComponent>
+                <MudSelect T="@FilterItem" MultiSelection="true" 
+                    SelectAll="true" SelectAllText="Select all" 
+                    @bind-SelectedValues="FilterOptions.SelectedShowTypes"
+                    ToStringFunc="@converter" Label="Shows type" 
+                    AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Clearable>
+                    @foreach (var filterListItem in showTypes) 
+                    {
+                        <MudSelectItem Value="@filterListItem" />
+                    }
+                </MudSelect>
             </div>
             <div class="col-sm-10 col-md-8 col-lg-5">
-                <MultiSelectComponent Config="selectedSubscriptionTypes"
-                    DropDownList="subscriptionTypes" Label="Subscriptions"                      
-                    ConfigChanged="@OnSubscriptionTypeSelectionChanged">
-                </MultiSelectComponent>
+                <MudSelect T="@FilterItem" MultiSelection="true" 
+                    SelectAll="true" SelectAllText="Select all" 
+                    @bind-SelectedValues="FilterOptions.SelectedSubscriptions"
+                    ToStringFunc="@converter" Label="Subscripitons" 
+                    AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Clearable>
+                    @foreach (var filterListItem in subscriptionTypes) 
+                    {
+                        <MudSelectItem Value="@filterListItem" />
+                    }
+                </MudSelect>
             </div>
         </div>
 
-                 
-        <MudTextField Class="flex-grow-1" @bind-Value="@searchString" 
+        <MudTextField Class="flex-grow-1" @bind-Value="@FilterOptions.SearchString" 
             Label="Search by title" Variant="Variant.Outlined" 
             Adornment="Adornment.End" Placeholder="Search for shows.."
             AdornmentIcon="@Icons.Filled.Search"  />        
@@ -41,11 +52,11 @@
         <MudFab EndIcon="@Icons.Filled.FilterListOff" Label="Clear" 
             Class="border-secondary text-secondary" Size="Size.Large" 
             Color="Color.Default"
-            OnClick="() => RefreshFilters()" Variant="Variant.Outlined"  />
+            OnClick="() => FilterOptions.ResetFilters()" Variant="Variant.Outlined"  />
 
         <MudFab EndIcon="@Icons.Filled.FilterList" Label="Apply" 
             Class="bg-secondary text-white" Size="Size.Large" 
-            OnClick="() => OnApplyFilters.InvokeAsync(searchString)" />
+            OnClick="() => SubmitFilterOptions()" />
     </div>
 
 </div>
@@ -53,35 +64,27 @@
 @code {
     public List<FilterItem> showTypes { get; set; } = new List<FilterItem>();
     public List<FilterItem> subscriptionTypes { get; set; } = new List<FilterItem>();
-        
-    public List<FilterItem> selectedShowTypes { get; set; } = new List<FilterItem>();
-    public List<FilterItem> selectedSubscriptionTypes { get; set; } = new List<FilterItem>();
-        
-    [Parameter] 
-    public string? searchString { get; set; }
     
     [Parameter]
-    public EventCallback<string> OnApplyFilters { get; set; }
+    public FilterOptions FilterOptions { get; set; } = new FilterOptions();
+    
+    [Parameter]
+    public EventCallback<FilterOptions> OnApplyFilters { get; set; }
+    
+    Func<FilterItem, string> converter = p => p?.Name!;
+    
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         this.BuildFilterItems();
     }
-    
-    public void OnShowTypeSelectionChanged(List<FilterItem> updatedValues)
-    {
-        updatedValues.ToList().ForEach(fi => Console.WriteLine(fi.Name));  
-    }
 
-    public void OnSubscriptionTypeSelectionChanged(List<FilterItem> updatedValues) 
+    public async Task SubmitFilterOptions()
     {
-        updatedValues.ToList().ForEach(fi => Console.WriteLine(fi.Name));  
-    }
-
-    private void RefreshFilters()
-    {
-        this.selectedShowTypes = new List<FilterItem>();
-        this.selectedSubscriptionTypes = new List<FilterItem>();
+        var showsSelected = FilterOptions.SelectedShowTypes.Select(st => st.Value).ToList();
+        
+        // Console.WriteLine($"{(showsSelected.Count > 0 ? showsSelected.First() : 0)} selected");
+        await this.OnApplyFilters.InvokeAsync(this.FilterOptions);
     }
 
     private void BuildFilterItems() 
@@ -108,7 +111,7 @@
             });
         });
 
-        this.selectedShowTypes = new List<FilterItem>(this.showTypes);
-        this.selectedSubscriptionTypes = new List<FilterItem>(this.subscriptionTypes);
+        this.FilterOptions.SelectedShowTypes = new List<FilterItem>(this.showTypes);
+        this.FilterOptions.SelectedSubscriptions = new List<FilterItem>(this.subscriptionTypes);        
     }
 }
