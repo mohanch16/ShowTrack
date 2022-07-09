@@ -61,17 +61,17 @@ else
      
     public FilterOptionsDTO UpdatedFilterOptions { get; set; } = new FilterOptionsDTO();
     
-    private Show[]? shows;
+    private ShowDTO[]? shows;
 
     protected override async Task OnInitializedAsync()
     {
         if (this.showType != ShowType.None)
         {                
-            this.shows = await Http.GetFromJsonAsync<Show[]>($"api/Shows?showType={this.showType}");            
+            this.shows = await Http.GetFromJsonAsync<ShowDTO[]>($"api/Shows?showType={this.showType}");            
         }
         else 
         {
-            this.shows = await Http.GetFromJsonAsync<Show[]>("api/Shows");
+            this.shows = await Http.GetFromJsonAsync<ShowDTO[]>("api/Shows");
         }
     }
 
@@ -83,6 +83,6 @@ else
         Console.WriteLine(JsonSerializer.Serialize(this.UpdatedFilterOptions));
 
         var response = await Http.PostAsJsonAsync<FilterOptionsDTO>($"api/Shows/filter", this.UpdatedFilterOptions);
-        this.shows = await response.Content.ReadFromJsonAsync<Show[]>(); 
+        this.shows = await response.Content.ReadFromJsonAsync<ShowDTO[]>(); 
     }
 }
