@@ -13,12 +13,14 @@ else
 { 
     <Filters searchString="" OnApplyFilters="@SearchShows"></Filters>
 
-    <div class="d-flex flex-wrap gap-3 mb-4">
-        @foreach (var show in shows)
-        {
-            <ShowListItem show="@show" />
-        }
-    </div>
+    <MudPaper Elevation="2" Class="p-4 mb-4">
+        <div class="d-flex flex-wrap gap-3">
+            @foreach (var show in shows)
+            {
+                <ShowListItem show="@show" />
+            }
+        </div>
+    </MudPaper>    
 @* 
     <div id="paginationSection" class="mb-4">
         <nav aria-label="Page navigation example">
