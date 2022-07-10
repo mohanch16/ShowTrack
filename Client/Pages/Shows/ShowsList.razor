@@ -13,9 +13,7 @@
 }
 else
 { 
-    <Filters FilterOptions="@FilterOptions" 
-        ForShowType="@ShowType"
-        OnApplyFilters="@SearchShows"></Filters>
+    <Filters FilterOptions="@FilterOptions" OnApplyFilters="@SearchShows" />
 
     <MudPaper Elevation="2" Class="p-4 mb-4">
         <div class="d-flex flex-wrap gap-3">
@@ -30,16 +28,16 @@ else
                     No results found.
                 </MudAlert>
             }
-            else
-            {
-                <div class="d-flex flex-column align-center">
-                    <MudPagination ShowFirstButton="true" 
-                        ShowLastButton="true" Class="mt-4"
-                        Count="@PaginationOptions.TotalNumberOfPages" 
-                        @bind-Selected="@PaginationOptions.CurrentPageNumber" />
-                </div>
-            }
         </div>
+        @if (shows.Count() > 0)
+        {
+            <div class="d-flex flex-column align-center">
+                <MudPagination ShowFirstButton="true" 
+                    ShowLastButton="true" Class="mt-4"
+                    Count="@PaginationOptions.TotalNumberOfPages" 
+                    @bind-Selected="@PaginationOptions.CurrentPageNumber" />
+            </div>
+        }
     </MudPaper>
 }
 
@@ -69,7 +67,8 @@ else
         
         // TODO: Verifying filters / pagination options changed/pristine.
         this.PagedResult.FilterOptionsDTO = filterOptionsDTO;
-
+        this.InitPagedResultsOptions();
+        
         await this.GetShowsCount();
         await this.GetShows();
     }

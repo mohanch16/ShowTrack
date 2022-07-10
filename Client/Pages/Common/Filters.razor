@@ -5,72 +5,77 @@
 
 @namespace ShowTrack.Components.Common
 
-<div class="border my-4 px-4 py-2 rounded-lg shadow-sm">
-    <MudItem Class="d-flex align-items-center">
-        <MudIcon Icon="@Icons.Filled.FilterList" Color="Color.Dark" />
-        <MudText Typo="Typo.h6" Class="mx-2">Filters</MudText>
-        <MudIcon Icon="@Icons.Filled.FilterAlt" Color="Color.Dark" />
-    </MudItem>
+<div class="my-4">
+    <MudExpansionPanels>
+        <MudExpansionPanel>
 
-    <div class="d-flex justify-content-between flex-wrap gap-3 my-3">
-        
-        <div class="d-flex gap-3 flex-wrap">
-            @if (this.ForShowType == ShowType.None)
-            {
-                <div>
-                    <MudSelect T="@FilterItem" MultiSelection="true" 
-                        SelectAll="true" SelectAllText="Select all" 
-                        @bind-SelectedValues="FilterOptions.SelectedShowTypes"
-                        ToStringFunc="@converter" Label="Shows type" 
-                        AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Clearable>
-                        @foreach (var filterListItem in showTypes) 
-                        {
-                            <MudSelectItem Value="@filterListItem" />
-                        }
-                    </MudSelect>
+            <TitleContent>
+                <MudItem Class="d-flex align-items-center">
+                    <MudIcon Icon="@Icons.Filled.FilterList" Color="Color.Dark" />
+                    <MudText Typo="Typo.h6" Class="mx-2">Filters</MudText>
+                    <MudIcon Icon="@Icons.Filled.FilterAlt" Color="Color.Dark" />
+                </MudItem>
+            </TitleContent>
+
+            <ChildContent>
+                <div class="d-flex justify-content-between flex-wrap gap-3 my-3">
+                    
+                    <div class="d-flex gap-3 flex-wrap">
+                    
+                        <div>
+                            <MudSelect T="@FilterItem" MultiSelection="true" 
+                                SelectAll="true" SelectAllText="Select all" 
+                                @bind-SelectedValues="FilterOptions.SelectedShowTypes"
+                                ToStringFunc="@converter" Label="Shows type" 
+                                AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Clearable>
+                                @foreach (var filterListItem in showTypes) 
+                                {
+                                    <MudSelectItem Value="@filterListItem" />
+                                }
+                            </MudSelect>
+                        </div>
+
+                        <div>
+                            <MudSelect T="@FilterItem" MultiSelection="true" 
+                                SelectAll="true" SelectAllText="Select all" 
+                                @bind-SelectedValues="FilterOptions.SelectedSubscriptions"
+                                ToStringFunc="@converter" Label="Subscripitons" 
+                                AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Clearable>
+                                @foreach (var filterListItem in subscriptionTypes) 
+                                {
+                                    <MudSelectItem Value="@filterListItem" />
+                                }
+                            </MudSelect>
+                        </div>
+                    </div>
+
+                    <MudTextField Class="flex-grow-1" @bind-Value="@FilterOptions.SearchString" 
+                        Label="Search by title" Variant="Variant.Outlined" 
+                        Adornment="Adornment.End" Placeholder="Search for shows.."
+                        AdornmentIcon="@Icons.Filled.Search"  />        
+
                 </div>
-            }
 
-            <div>
-                <MudSelect T="@FilterItem" MultiSelection="true" 
-                    SelectAll="true" SelectAllText="Select all" 
-                    @bind-SelectedValues="FilterOptions.SelectedSubscriptions"
-                    ToStringFunc="@converter" Label="Subscripitons" 
-                    AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Clearable>
-                    @foreach (var filterListItem in subscriptionTypes) 
-                    {
-                        <MudSelectItem Value="@filterListItem" />
-                    }
-                </MudSelect>
-            </div>
-        </div>
+                <div class="d-flex align-items-center gap-3 justify-content-end mb-1">
+                    <MudFab EndIcon="@Icons.Filled.FilterListOff" Label="Clear" 
+                        Class="border-secondary text-secondary" Size="Size.Large" 
+                        Color="Color.Default"
+                        OnClick="() => FilterOptions.ResetFilters()" Variant="Variant.Outlined"  />
 
-        <MudTextField Class="flex-grow-1" @bind-Value="@FilterOptions.SearchString" 
-            Label="Search by title" Variant="Variant.Outlined" 
-            Adornment="Adornment.End" Placeholder="Search for shows.."
-            AdornmentIcon="@Icons.Filled.Search"  />        
+                    <MudFab EndIcon="@Icons.Filled.FilterList" Label="Apply" 
+                        Class="bg-secondary text-white" Size="Size.Large" 
+                        OnClick="() => SubmitFilterOptions()" />
+                </div>
 
-    </div>
-
-    <div class="d-flex align-items-center gap-3 justify-content-end mb-1">
-        <MudFab EndIcon="@Icons.Filled.FilterListOff" Label="Clear" 
-            Class="border-secondary text-secondary" Size="Size.Large" 
-            Color="Color.Default"
-            OnClick="() => FilterOptions.ResetFilters()" Variant="Variant.Outlined"  />
-
-        <MudFab EndIcon="@Icons.Filled.FilterList" Label="Apply" 
-            Class="bg-secondary text-white" Size="Size.Large" 
-            OnClick="() => SubmitFilterOptions()" />
-    </div>
+            </ChildContent>
+        </MudExpansionPanel>
+    </MudExpansionPanels>
 
 </div>
 
 @code {
     public List<FilterItem> showTypes { get; set; } = new List<FilterItem>();
     public List<FilterItem> subscriptionTypes { get; set; } = new List<FilterItem>();
-    
-    [Parameter]
-    public ShowType ForShowType { get; set; }
     
     [Parameter]
     public FilterOptions FilterOptions { get; set; } = new FilterOptions();
@@ -100,30 +105,16 @@
 
     private void BuildShowTypeFilters()
     {
-        if (this.ForShowType != ShowType.None)   
+        var excludeShowTypes = new ShowType[] { ShowType.None };
+        var _showTypes = Extensions.GetFilteredEnumValues<ShowType>(excludeShowTypes).ToList();
+        _showTypes.ForEach(showType => 
         {
-            this.showTypes = new List<FilterItem> 
+            this.showTypes.Add(new FilterItem 
             {
-                new FilterItem 
-                {
-                    Name = this.ForShowType.Description(),
-                    Value = (int)this.ForShowType
-                }
-            };
-        }
-        else
-        {
-            var excludeShowTypes = new ShowType[] { ShowType.None };
-            var _showTypes = Extensions.GetFilteredEnumValues<ShowType>(excludeShowTypes).ToList();
-            _showTypes.ForEach(showType => 
-            {
-                this.showTypes.Add(new FilterItem 
-                {
-                    Name = showType.Description(),
-                    Value = (int)showType,
-                });
+                Name = showType.Description(),
+                Value = (int)showType,
             });
-        }
+        });
 
         this.FilterOptions.SelectedShowTypes = new List<FilterItem>(this.showTypes);        
     }
