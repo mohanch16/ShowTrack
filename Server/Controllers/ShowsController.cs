@@ -17,16 +17,9 @@ public class ShowsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<List<Show>> GetShows(ShowType showType) 
+    public async Task<List<Show>> GetShows() 
     {
-        if (showType != ShowType.None)
-        {
-            return await this.showsService.GetShowsByType(showType);            
-        }
-        else
-        {
-            return await this.showsService.GetShows();            
-        }
+        return await this.showsService.GetShows();                    
     }
 
     [HttpGet("{id:length(24)}")]
@@ -82,15 +75,16 @@ public class ShowsController : ControllerBase
         return NoContent();
     }
 
-    [HttpGet("search")]
-    public async Task<List<Show>> SearchShows(string showTitle, ShowType showType)
+    [HttpPost("pagedresult")]
+    public async Task<List<Show>> GetPagedFilteredShows([FromBody] PagedResult pagingOptions)
     {
-        return await this.showsService.SearchShows(showTitle, showType);        
+        return await this.showsService.GetShows(pagingOptions.FilterOptionsDTO, pagingOptions.PageNumber, pagingOptions.PageSize);        
     }
 
-    [HttpPost("filter")]
-    public async Task<List<Show>> GetFilteredShows([FromBody] FilterOptionsDTO filteredOptions)
+    [HttpPost("pagedresultcount")]
+    public async Task<long> GetPagedFilteredShowsCount([FromBody] FilterOptionsDTO filterOptions)
     {
-        return await this.showsService.FilterShows(filteredOptions);        
+        var recordsCount = await this.showsService.GetFilteredRecordsCount(filterOptions);
+        return recordsCount;
     }
 }

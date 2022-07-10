@@ -36,14 +36,4 @@ public static class Extensions
          return enumValues.Where(st => !excludeItems
                                 .Any(itemValue => itemValue.Equals(st))).ToArray();
     }
-
-    public static bool EnumListEquals<T>(List<T> one, List<T> two) where T : struct, IConvertible
-    {
-        if (!typeof(T).IsEnum)
-        {
-            throw new ArgumentException("T must be an enumerated type");
-        }
-        return (one.Count() == two.Count() &&
-                one.Count(two.Contains) == two.Count());
-    }
 }

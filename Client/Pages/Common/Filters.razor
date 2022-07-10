@@ -5,59 +5,71 @@
 
 @namespace ShowTrack.Components.Common
 
-<div class="border my-4 px-4 py-2 rounded-lg shadow-sm">
-    <MudItem Class="d-flex align-items-center">
-        <MudIcon Icon="@Icons.Filled.FilterList" Color="Color.Dark" />
-        <MudText Typo="Typo.h6" Class="mx-2">Filters</MudText>
-        <MudIcon Icon="@Icons.Filled.FilterAlt" Color="Color.Dark" />
-    </MudItem>
+<div class="my-4">
+    <MudExpansionPanels>
+        <MudExpansionPanel>
 
-    <div class="d-flex justify-content-between flex-wrap gap-3 my-3">
-        
-        <div class="d-flex gap-3 flex-wrap">
-            <div class="col-sm-10 col-md-8 col-lg-5">
-                <MudSelect T="@FilterItem" MultiSelection="true" 
-                    SelectAll="true" SelectAllText="Select all" 
-                    @bind-SelectedValues="FilterOptions.SelectedShowTypes"
-                    ToStringFunc="@converter" Label="Shows type" 
-                    AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Clearable>
-                    @foreach (var filterListItem in showTypes) 
-                    {
-                        <MudSelectItem Value="@filterListItem" />
-                    }
-                </MudSelect>
-            </div>
-            <div class="col-sm-10 col-md-8 col-lg-5">
-                <MudSelect T="@FilterItem" MultiSelection="true" 
-                    SelectAll="true" SelectAllText="Select all" 
-                    @bind-SelectedValues="FilterOptions.SelectedSubscriptions"
-                    ToStringFunc="@converter" Label="Subscripitons" 
-                    AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Clearable>
-                    @foreach (var filterListItem in subscriptionTypes) 
-                    {
-                        <MudSelectItem Value="@filterListItem" />
-                    }
-                </MudSelect>
-            </div>
-        </div>
+            <TitleContent>
+                <MudItem Class="d-flex align-items-center">
+                    <MudIcon Icon="@Icons.Filled.FilterList" Color="Color.Dark" />
+                    <MudText Typo="Typo.h6" Class="mx-2">Filters</MudText>
+                    <MudIcon Icon="@Icons.Filled.FilterAlt" Color="Color.Dark" />
+                </MudItem>
+            </TitleContent>
 
-        <MudTextField Class="flex-grow-1" @bind-Value="@FilterOptions.SearchString" 
-            Label="Search by title" Variant="Variant.Outlined" 
-            Adornment="Adornment.End" Placeholder="Search for shows.."
-            AdornmentIcon="@Icons.Filled.Search"  />        
+            <ChildContent>
+                <div class="d-flex justify-content-between flex-wrap gap-3 my-3">
+                    
+                    <div class="d-flex gap-3 flex-wrap">
+                    
+                        <div>
+                            <MudSelect T="@FilterItem" MultiSelection="true" 
+                                SelectAll="true" SelectAllText="Select all" 
+                                @bind-SelectedValues="FilterOptions.SelectedShowTypes"
+                                ToStringFunc="@converter" Label="Shows type" 
+                                AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Clearable>
+                                @foreach (var filterListItem in showTypes) 
+                                {
+                                    <MudSelectItem Value="@filterListItem" />
+                                }
+                            </MudSelect>
+                        </div>
 
-    </div>
+                        <div>
+                            <MudSelect T="@FilterItem" MultiSelection="true" 
+                                SelectAll="true" SelectAllText="Select all" 
+                                @bind-SelectedValues="FilterOptions.SelectedSubscriptions"
+                                ToStringFunc="@converter" Label="Subscripitons" 
+                                AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Clearable>
+                                @foreach (var filterListItem in subscriptionTypes) 
+                                {
+                                    <MudSelectItem Value="@filterListItem" />
+                                }
+                            </MudSelect>
+                        </div>
+                    </div>
 
-    <div class="d-flex align-items-center gap-3 justify-content-end mb-1">
-        <MudFab EndIcon="@Icons.Filled.FilterListOff" Label="Clear" 
-            Class="border-secondary text-secondary" Size="Size.Large" 
-            Color="Color.Default"
-            OnClick="() => FilterOptions.ResetFilters()" Variant="Variant.Outlined"  />
+                    <MudTextField Class="flex-grow-1" @bind-Value="@FilterOptions.SearchString" 
+                        Label="Search by title" Variant="Variant.Outlined" 
+                        Adornment="Adornment.End" Placeholder="Search for shows.."
+                        AdornmentIcon="@Icons.Filled.Search"  />        
 
-        <MudFab EndIcon="@Icons.Filled.FilterList" Label="Apply" 
-            Class="bg-secondary text-white" Size="Size.Large" 
-            OnClick="() => SubmitFilterOptions()" />
-    </div>
+                </div>
+
+                <div class="d-flex align-items-center gap-3 justify-content-end mb-1">
+                    <MudFab EndIcon="@Icons.Filled.FilterListOff" Label="Clear" 
+                        Class="border-secondary text-secondary" Size="Size.Large" 
+                        Color="Color.Default"
+                        OnClick="() => FilterOptions.ResetFilters()" Variant="Variant.Outlined"  />
+
+                    <MudFab EndIcon="@Icons.Filled.FilterList" Label="Apply" 
+                        Class="bg-secondary text-white" Size="Size.Large" 
+                        OnClick="() => SubmitFilterOptions()" />
+                </div>
+
+            </ChildContent>
+        </MudExpansionPanel>
+    </MudExpansionPanels>
 
 </div>
 
@@ -79,18 +91,22 @@
         this.BuildFilterItems();
     }
 
-    public async Task SubmitFilterOptions()
+    private async Task SubmitFilterOptions()
     {
-        var showsSelected = FilterOptions.SelectedShowTypes.Select(st => st.Value).ToList();
-        
-        // Console.WriteLine($"{(showsSelected.Count > 0 ? showsSelected.First() : 0)} selected");
+        // TODO: Adding validations [invoking callback function if only filters are changed].   
         await this.OnApplyFilters.InvokeAsync(this.FilterOptions);
     }
 
     private void BuildFilterItems() 
     {
-        var _showTypes = Extensions.GetFilteredEnumValues<ShowType>(
-            excludeItems: new ShowType[] { ShowType.None }).ToList();
+        this.BuildShowTypeFilters();
+        this.BuildSubscriptionFilters();
+    }       
+
+    private void BuildShowTypeFilters()
+    {
+        var excludeShowTypes = new ShowType[] { ShowType.None };
+        var _showTypes = Extensions.GetFilteredEnumValues<ShowType>(excludeShowTypes).ToList();
         _showTypes.ForEach(showType => 
         {
             this.showTypes.Add(new FilterItem 
@@ -100,8 +116,13 @@
             });
         });
 
-        var _subscriptionTypes = Extensions.GetFilteredEnumValues<SubscriptionType>(
-            excludeItems: new SubscriptionType[] { SubscriptionType.None }).ToList();
+        this.FilterOptions.SelectedShowTypes = new List<FilterItem>(this.showTypes);        
+    }
+
+    private void BuildSubscriptionFilters()
+    {
+        var excludeSubscriptions = new SubscriptionType[] { SubscriptionType.None };        
+        var _subscriptionTypes = Extensions.GetFilteredEnumValues<SubscriptionType>(excludeSubscriptions).ToList();
         _subscriptionTypes.ForEach(subscriptionType => 
         {
             this.subscriptionTypes.Add(new FilterItem 
@@ -111,7 +132,6 @@
             });
         });
 
-        this.FilterOptions.SelectedShowTypes = new List<FilterItem>(this.showTypes);
-        this.FilterOptions.SelectedSubscriptions = new List<FilterItem>(this.subscriptionTypes);        
+        this.FilterOptions.SelectedSubscriptions = new List<FilterItem>(this.subscriptionTypes);
     }
 }
