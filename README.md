@@ -14,7 +14,27 @@ Showtrack is a movie catalog app letting users view, search, and compare various
 2) https://www.kaggle.com/datasets/shivamb/netflix-shows
 3) https://www.kaggle.com/datasets/shivamb/disney-movies-and-tv-shows
 
-<ins>Screens<ins>:
+<ins>Screens (Date: July 10th, 2022) <ins>:
+1) Shows Catalog page UI
+
+[Default page]
+<img width="1421" alt="image" src="https://user-images.githubusercontent.com/22731043/178163678-fc1d1ac1-e600-4f5a-8366-84f007aed959.png">
+
+[Default page with filters expanded]
+<img width="1421" alt="image" src="https://user-images.githubusercontent.com/22731043/178163689-e6060914-02af-48b4-9124-6e0b22743193.png">
+
+[Default page as a whole (zoomed out)]
+<img width="1421" alt="image" src="https://user-images.githubusercontent.com/22731043/178163725-b22ee253-037f-479d-9f09-468108065e62.png">
+
+[Swagger UI]
+<img width="1421" alt="image" src="https://user-images.githubusercontent.com/22731043/178149289-c4972145-d5a2-48cc-a2e2-119496056a90.png">
+
+[Show details page]
+<img width="1421" alt="image" src="https://user-images.githubusercontent.com/22731043/178163641-6a29952c-22ea-4f38-9ef3-e4ceedf38c64.png">
+
+# Archived (Old pages UI)
+
+<ins>Screens (Date: July 10th, 2022) <ins>
 1) Shows Catalog page UI
 
 [Default page]
@@ -29,8 +49,7 @@ Showtrack is a movie catalog app letting users view, search, and compare various
 [Swagger UI]
 <img width="1421" alt="image" src="https://user-images.githubusercontent.com/22731043/178149289-c4972145-d5a2-48cc-a2e2-119496056a90.png">
 
-# Archived (Old pages UI)
-
+Date: July 8th, 2022
 (a) Home page:
 <img width="1433" alt="image" src="https://user-images.githubusercontent.com/22731043/177480837-c7074c3d-45e5-4c9c-a983-4c5e4fb45687.png">
 
