@@ -13,7 +13,9 @@
 }
 else
 { 
-    <Filters FilterOptions="@FilterOptions" OnApplyFilters="@SearchShows" />
+    <Filters FilterOptions="@FilterOptions" 
+        HideShowType="@(@ShowType != ShowType.None)"
+        OnApplyFilters="@SearchShows" />
 
     <MudPaper Elevation="2" Class="p-4 mb-4">
         <div class="d-flex flex-wrap gap-3">
