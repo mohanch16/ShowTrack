@@ -75,16 +75,15 @@ public class ShowsController : ControllerBase
         return NoContent();
     }
 
-    [HttpPost("pagedresult")]
+    [HttpPost("PagedResult")]
     public async Task<List<Show>> GetPagedFilteredShows([FromBody] PagedResult pagingOptions)
     {
         return await this.showsService.GetShows(pagingOptions.FilterOptionsDTO, pagingOptions.PageNumber, pagingOptions.PageSize);        
     }
 
-    [HttpPost("pagedresultcount")]
+    [HttpPost("PagedResultCount")]
     public async Task<long> GetPagedFilteredShowsCount([FromBody] FilterOptionsDTO filterOptions)
     {
-        var recordsCount = await this.showsService.GetFilteredRecordsCount(filterOptions);
-        return recordsCount;
+        return await this.showsService.GetFilteredRecordsCount(filterOptions);        
     }
 }

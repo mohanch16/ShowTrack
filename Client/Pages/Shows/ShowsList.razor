@@ -101,7 +101,7 @@ else
     {
         try
         {
-            var response = await Http.PostAsJsonAsync<PagedResult>($"api/Shows/pagedresult", this.PagedResult);
+            var response = await Http.PostAsJsonAsync<PagedResult>($"api/Shows/PagedResult", this.PagedResult);
             this.shows = await response.Content.ReadFromJsonAsync<ShowDTO[]>();            
         }
         catch (Exception ex)
@@ -115,7 +115,7 @@ else
     {
         try
         {
-            var response = await Http.PostAsJsonAsync<FilterOptionsDTO>($"api/Shows/pagedresultcount", this.PagedResult.FilterOptionsDTO);
+            var response = await Http.PostAsJsonAsync<FilterOptionsDTO>($"api/Shows/PagedResultCount", this.PagedResult.FilterOptionsDTO);
             var recordsCount = await response.Content.ReadFromJsonAsync<long>();
             this.PaginationOptions.TotalRecordsCount = recordsCount;        
         }
