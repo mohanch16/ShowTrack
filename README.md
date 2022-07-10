@@ -49,7 +49,8 @@ Showtrack is a movie catalog app letting users view, search, and compare various
 [Swagger UI]
 <img width="1421" alt="image" src="https://user-images.githubusercontent.com/22731043/178149289-c4972145-d5a2-48cc-a2e2-119496056a90.png">
 
-Date: July 8th, 2022
+<ins>Screens (Date: July 8th, 2022) <ins>
+
 (a) Home page:
 <img width="1433" alt="image" src="https://user-images.githubusercontent.com/22731043/177480837-c7074c3d-45e5-4c9c-a983-4c5e4fb45687.png">
 
