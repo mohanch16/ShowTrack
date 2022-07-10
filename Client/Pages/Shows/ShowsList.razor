@@ -13,7 +13,9 @@
 }
 else
 { 
-    <Filters FilterOptions="@FilterOptions" OnApplyFilters="@SearchShows" />
+    <Filters FilterOptions="@FilterOptions" 
+        HideShowType="@(@ShowType != ShowType.None)"
+        OnApplyFilters="@SearchShows" />
 
     <MudPaper Elevation="2" Class="p-4 mb-4">
         <div class="d-flex flex-wrap gap-3">
@@ -31,7 +33,7 @@ else
         </div>
         @if (shows.Count() > 0)
         {
-            <div class="d-flex flex-wrap justify-content-between mt-10">           
+            <div class="d-flex flex-wrap justify-content-between mt-5">           
                <div>
                     <MudSelect T="int"Variant="Variant.Outlined" 
                         Label="Number of shows per page" 

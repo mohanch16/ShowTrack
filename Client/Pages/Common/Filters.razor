@@ -22,18 +22,21 @@
                     
                     <div class="d-flex gap-3 flex-wrap">
                     
-                        <div>
-                            <MudSelect T="@FilterItem" MultiSelection="true" 
-                                SelectAll="true" SelectAllText="Select all" 
-                                @bind-SelectedValues="FilterOptions.SelectedShowTypes"
-                                ToStringFunc="@converter" Label="Shows type" 
-                                AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Clearable>
-                                @foreach (var filterListItem in showTypes) 
-                                {
-                                    <MudSelectItem Value="@filterListItem" />
-                                }
-                            </MudSelect>
-                        </div>
+                        @if (!this.HideShowType)
+                        {
+                            <div>
+                                <MudSelect T="@FilterItem" MultiSelection="true" 
+                                    SelectAll="true" SelectAllText="Select all" 
+                                    @bind-SelectedValues="FilterOptions.SelectedShowTypes"
+                                    ToStringFunc="@converter" Label="Shows type" 
+                                    AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Clearable>
+                                    @foreach (var filterListItem in showTypes) 
+                                    {
+                                        <MudSelectItem Value="@filterListItem" />
+                                    }
+                                </MudSelect>
+                            </div>
+                        }
 
                         <div>
                             <MudSelect T="@FilterItem" MultiSelection="true" 
@@ -83,6 +86,9 @@
     [Parameter]
     public EventCallback<FilterOptions> OnApplyFilters { get; set; }
     
+    [Parameter]
+    public bool HideShowType { get; set; } = false;
+
     Func<FilterItem, string> converter = p => p?.Name!;
     
     protected override async Task OnInitializedAsync()
@@ -99,7 +105,11 @@
 
     private void BuildFilterItems() 
     {
-        this.BuildShowTypeFilters();
+        if (!this.HideShowType)
+        {
+            this.BuildShowTypeFilters();            
+        }
+
         this.BuildSubscriptionFilters();
     }       
 
