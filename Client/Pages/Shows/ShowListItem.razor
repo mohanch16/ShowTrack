@@ -18,7 +18,28 @@
             <span>Cast: </span>
             @if (@show.Cast?.Length > 0) 
             {
-                <span>@String.Join(", ", @show.Cast)</span>
+                <span>@String.Join(", ", @show.Cast.Take(3))</span>
+                @if (@show.Cast.Length > 3)
+                {
+                    <span>,</span>
+                    <span class="ml-1 text-muted">+ @(@show.Cast.Length - 3) More</span>
+                }
+            }
+            else
+            {
+                <span class="text-muted text-secondary">Not Available</span>
+            }
+        </p>
+        <p class="card-text">                        
+            <span>Directed by: </span>
+            @if (@show.Directors?.Length > 0) 
+            {
+                <span>@String.Join(", ", @show.Directors.Take(3))</span>
+                @if (@show.Directors.Length > 3)
+                {
+                    <span>,</span>
+                    <span class="ml-1 text-muted">+ @(@show.Directors.Length - 3) More</span>
+                }
             }
             else
             {
@@ -46,7 +67,7 @@
     </div>
     <div class="card-footer d-flex justify-content-between bg-light">
         <a href="#" class="btn btn-outline-secondary text-center" 
-            role="button" @onclick="@(() => Snackbar.Add("Coming soon.."))">Select</a>                    
+            role="button" @onclick="@(() => Snackbar.Add("\"Select & Compare\" feature is coming soon.."))">Select</a>                    
         <a href="#" class="btn btn-primary text-center" role="button">View details</a>
     </div>
 </div>
