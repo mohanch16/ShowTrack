@@ -31,9 +31,9 @@ else
         </div>
         @if (shows.Count() > 0)
         {
-            <div class="d-flex flex-wrap justify-content-between mt-6">           
+            <div class="d-flex flex-wrap justify-content-between mt-10">           
                <div>
-                    <MudSelect T="int" Class="mx-4" Variant="Variant.Outlined" 
+                    <MudSelect T="int"Variant="Variant.Outlined" 
                         Label="Number of shows per page" 
                         AnchorOrigin="Origin.BottomCenter"
                         Value="@PaginationOptions.PageSize" 
@@ -51,7 +51,6 @@ else
                         Selected="@PaginationOptions.CurrentPageNumber"
                         SelectedChanged="@UpdatePageNumber" />
                 </div>
-                <div style="width: 250px;"></div>
             </div>
         }
     </MudPaper>
