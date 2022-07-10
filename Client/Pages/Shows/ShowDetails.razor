@@ -1,0 +1,117 @@
+@page "/shows/{ShowId}"
+@using ShowTrack.Shared.Models
+@using ShowTrack.Shared.Extensions
+
+@inject HttpClient Http
+
+@if (this.showDetails == null) 
+{
+    <p><em>Loading...</em></p>   
+}
+else
+{
+    <h1>@((@showDetails.Type).Description()): @showDetails.Title (@showDetails.ReleaseYear)</h1>
+    <p class="text-muted gap-1">                        
+        <span class="me-1">Categories: </span>
+        @if (@showDetails.Categories?.Length > 0) 
+        {
+            <span class="d-inline-flex flex-wrap gap-1">
+                    @String.Join(", ", @showDetails.Categories)
+            </span>
+        }
+        else
+        {
+            <span class="text-muted text-secondary">Not Available</span>
+        }
+    </p> 
+    <div class="col-lg-7 col-md-9 col-sm-11">
+            <p class="card-text">                        
+                <span>Directed by: </span>
+                @if (@showDetails.Directors?.Length > 0) 
+                {
+                    <span>@String.Join(", ", @showDetails.Directors)</span>
+                }
+                else
+                {
+                    <span class="text-muted text-secondary">Not Available</span>
+                }
+            </p>
+            <p class="card-text">                        
+                <span>Cast: </span>
+                @if (@showDetails.Cast?.Length > 0) 
+                {
+                    <span>@String.Join(", ", @showDetails.Cast)</span>                        
+                }
+                else
+                {
+                    <span class="text-muted text-secondary">Not Available</span>
+                }
+            </p>
+            <p>Released in Year: @showDetails.ReleaseYear</p>
+            <p class="card-text">                        
+                <span>Country of production: </span>
+                @if (@showDetails.Country != null) 
+                {
+                    <span>@showDetails.Country</span>                        
+                }
+                else
+                {
+                    <span class="text-muted text-secondary">Not Available</span>
+                }
+            </p>             
+            <div>
+                <p>Available in: @showDetails.SubscriptionType.Description()</p>
+            </div>
+            <div>
+                <p>                        
+                    <span>Date added: </span>
+                    @if (@showDetails.DateAdded != null) 
+                    {
+                        <span>@showDetails.DateAdded</span>                        
+                    }
+                    else
+                    {
+                        <span class="text-muted text-secondary">Not Available</span>
+                    }
+                </p>                 
+            </div>           
+            <p>Rating: @showDetails.Rating</p>
+            <p>Duration: @showDetails.Duration</p>
+            <p class="card-text gap-1">                        
+                <span class="me-1">Categories: </span>
+                @if (@showDetails.Categories?.Length > 0) 
+                {
+                    <span class="d-inline-flex flex-wrap gap-1">
+                        @foreach (var category in @showDetails.Categories) 
+                        {
+                            <span class="badge bg-light rounded-pill border text-secondary">
+                                @category
+                            </span>
+                        }
+                    </span>
+                }
+                else
+                {
+                    <span class="text-muted text-secondary">Not Available</span>
+                }
+            </p> 
+            <div>
+                <span>Plot:</span> 
+                <p class="lh-lg">
+                    @showDetails.Description
+                </p>
+            </div>
+    </div>
+}
+
+
+@code {
+    private ShowDTO? showDetails;
+
+    [Parameter]
+    public string ShowId { get; set; } = null!;
+    protected override async Task OnInitializedAsync()
+    {
+        showDetails = await Http.GetFromJsonAsync<ShowDTO>($"api/Shows/{this.ShowId}");
+    }
+}
