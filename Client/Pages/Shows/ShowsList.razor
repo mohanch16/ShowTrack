@@ -31,11 +31,27 @@ else
         </div>
         @if (shows.Count() > 0)
         {
-            <div class="d-flex flex-column align-center">
-                <MudPagination ShowFirstButton="true" 
-                    ShowLastButton="true" Class="mt-4"
-                    Count="@PaginationOptions.TotalNumberOfPages" 
-                    @bind-Selected="@PaginationOptions.CurrentPageNumber" />
+            <div class="d-flex flex-wrap justify-content-between mt-6">           
+               <div>
+                    <MudSelect T="int" Class="mx-4" Variant="Variant.Outlined" 
+                        Label="Number of shows per page" 
+                        AnchorOrigin="Origin.BottomCenter"
+                        Value="@PaginationOptions.PageSize" 
+                        ValueChanged="UpdatePageSize">
+                        @foreach (var pageSize in pageSizeDropDownOptions)
+                        {
+                            <MudSelectItem T="int" Value="@pageSize"/>   
+                        }
+                    </MudSelect>
+                </div>
+                <div class="pb-2">
+                    <MudPagination ShowFirstButton="true" 
+                        ShowLastButton="true" Class="mt-4" Size="Size.Medium" 
+                        Count="@PaginationOptions.TotalNumberOfPages" 
+                        Selected="@PaginationOptions.CurrentPageNumber"
+                        SelectedChanged="@UpdatePageNumber" />
+                </div>
+                <div style="width: 250px;"></div>
             </div>
         }
     </MudPaper>
@@ -53,11 +69,11 @@ else
     
     private ShowDTO[]? shows;
 
+    private static int[] pageSizeDropDownOptions = new [] { 5, 10, 20, 30, 50 };
+
     protected override async Task OnInitializedAsync()
     {
-        this.InitPagedResultsOptions();
-        await this.GetShowsCount();
-        await this.GetShows();
+        await this.LoadData();
     }
 
     public async Task SearchShows(FilterOptions filterOptions) 
@@ -65,10 +81,18 @@ else
         var filterOptionsDTO = filterOptions.BuildDataTransferObject();        
         // Console.WriteLine(JsonSerializer.Serialize(filterOptions));
         
-        // TODO: Verifying filters / pagination options changed/pristine.
+        // TODO: Verifying whether filters / pagination options changed, or pristine.
         this.PagedResult.FilterOptionsDTO = filterOptionsDTO;
-        this.InitPagedResultsOptions();
         
+        // resetting page-number when filters are changed
+        this.PaginationOptions.CurrentPageNumber = 1; 
+        
+        await this.LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        this.InitPagedResultsOptions();
         await this.GetShowsCount();
         await this.GetShows();
     }
@@ -77,7 +101,7 @@ else
     {
         try
         {
-            var response = await Http.PostAsJsonAsync<PagedResult>($"api/Shows/pagedresult", this.PagedResult);
+            var response = await Http.PostAsJsonAsync<PagedResult>($"api/Shows/PagedResult", this.PagedResult);
             this.shows = await response.Content.ReadFromJsonAsync<ShowDTO[]>();            
         }
         catch (Exception ex)
@@ -91,7 +115,7 @@ else
     {
         try
         {
-            var response = await Http.PostAsJsonAsync<FilterOptionsDTO>($"api/Shows/pagedresultcount", this.PagedResult.FilterOptionsDTO);
+            var response = await Http.PostAsJsonAsync<FilterOptionsDTO>($"api/Shows/PagedResultCount", this.PagedResult.FilterOptionsDTO);
             var recordsCount = await response.Content.ReadFromJsonAsync<long>();
             this.PaginationOptions.TotalRecordsCount = recordsCount;        
         }
@@ -100,6 +124,22 @@ else
             Console.WriteLine($"Exception occured while reading data: ", ex.ToString());
             throw;
         }
+    }
+
+    private async void UpdatePageSize(int newSelection)
+    {
+        var selectedValue = newSelection;
+        this.PaginationOptions.PageSize = Convert.ToInt32(selectedValue);
+        await this.LoadData();
+        StateHasChanged();
+    }
+
+    private async void UpdatePageNumber(int newSelection)
+    {
+        var selectedPageNumber = newSelection;
+        this.PaginationOptions.CurrentPageNumber = Convert.ToInt32(selectedPageNumber);
+        await this.LoadData();
+        StateHasChanged();
     }
 
     private void InitPagedResultsOptions()

@@ -5,6 +5,8 @@ public class PaginationOptions
 {
     public int PageSize { get; set; } = 10;
 
+    public int DefaultPageNumber { get; set; }
+
     public int CurrentPageNumber { get; set; } = 1;
 
     public long TotalRecordsCount { get; set; } = 0;

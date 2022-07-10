@@ -1,5 +1,6 @@
 @using ShowTrack.Shared.Models
 @using ShowTrack.Shared.Extensions
+@inject ISnackbar Snackbar
 
 @namespace ShowTrack.Components.Shows
 
@@ -44,7 +45,8 @@
         </p>        
     </div>
     <div class="card-footer d-flex justify-content-between bg-light">
-        <a href="#" class="btn btn-outline-secondary text-center" role="button">Select</a>
+        <a href="#" class="btn btn-outline-secondary text-center" 
+            role="button" @onclick="@(() => Snackbar.Add("Coming soon.."))">Select</a>                    
         <a href="#" class="btn btn-primary text-center" role="button">View details</a>
     </div>
 </div>
