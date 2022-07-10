@@ -23,15 +23,24 @@ else
             {
                 <ShowListItem show="@show" />
             }
+
             @if (shows.Count() == 0)
             {
                 <MudAlert Severity="Severity.Info" Class="flex-grow-1">
                     No results found.
                 </MudAlert>
             }
+            else
+            {
+                <div class="d-flex flex-column align-center">
+                    <MudPagination ShowFirstButton="true" 
+                        ShowLastButton="true" Class="mt-4"
+                        Count="@PaginationOptions.TotalNumberOfPages" 
+                        @bind-Selected="@PaginationOptions.CurrentPageNumber" />
+                </div>
+            }
         </div>
-    </MudPaper>    
-
+    </MudPaper>
 }
 
 @code {
@@ -39,31 +48,69 @@ else
     public ShowType ShowType { get; set; } = ShowType.None;
     
     public FilterOptions FilterOptions { get; set; } = new FilterOptions();
-     
-    public FilterOptionsDTO UpdatedFilterOptions { get; set; } = new FilterOptionsDTO();
+
+    private PagedResult PagedResult { get; set; } = new PagedResult();
+    
+    private PaginationOptions PaginationOptions { get; set; } = new PaginationOptions();
     
     private ShowDTO[]? shows;
 
     protected override async Task OnInitializedAsync()
     {
-        if (this.ShowType != ShowType.None)
-        {                
-            this.shows = await Http.GetFromJsonAsync<ShowDTO[]>($"api/Shows?showType={this.ShowType}");            
-        }
-        else 
-        {
-            this.shows = await Http.GetFromJsonAsync<ShowDTO[]>("api/Shows");
-        }
+        this.InitPagedResultsOptions();
+        await this.GetShowsCount();
+        await this.GetShows();
     }
 
     public async Task SearchShows(FilterOptions filterOptions) 
+    {        
+        var filterOptionsDTO = filterOptions.BuildDataTransferObject();        
+        // Console.WriteLine(JsonSerializer.Serialize(filterOptions));
+        
+        // TODO: Verifying filters / pagination options changed/pristine.
+        this.PagedResult.FilterOptionsDTO = filterOptionsDTO;
+
+        await this.GetShowsCount();
+        await this.GetShows();
+    }
+
+    private async Task GetShows()
     {
-        // if (string.IsNullOrWhiteSpace(filterOptions?.SearchString)) return;
+        try
+        {
+            var response = await Http.PostAsJsonAsync<PagedResult>($"api/Shows/pagedresult", this.PagedResult);
+            this.shows = await response.Content.ReadFromJsonAsync<ShowDTO[]>();            
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception occured while reading data: ", ex.ToString());
+            throw;
+        }
+    }
 
-        this.UpdatedFilterOptions = filterOptions.BuildDataTransferObject();        
-        Console.WriteLine(JsonSerializer.Serialize(this.UpdatedFilterOptions));
+    private async Task GetShowsCount()
+    {
+        try
+        {
+            var response = await Http.PostAsJsonAsync<FilterOptionsDTO>($"api/Shows/pagedresultcount", this.PagedResult.FilterOptionsDTO);
+            var recordsCount = await response.Content.ReadFromJsonAsync<long>();
+            this.PaginationOptions.TotalRecordsCount = recordsCount;        
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception occured while reading data: ", ex.ToString());
+            throw;
+        }
+    }
 
-        var response = await Http.PostAsJsonAsync<FilterOptionsDTO>($"api/Shows/filter", this.UpdatedFilterOptions);
-        this.shows = await response.Content.ReadFromJsonAsync<ShowDTO[]>(); 
+    private void InitPagedResultsOptions()
+    {
+        if (this.ShowType != ShowType.None)
+        {
+            this.PagedResult.FilterOptionsDTO.SelectedShowTypes = new List<ShowType> { this.ShowType };
+        }
+
+        this.PagedResult.PageNumber = this.PaginationOptions.CurrentPageNumber; 
+        this.PagedResult.PageSize = this.PaginationOptions.PageSize; 
     }
 }

@@ -40,69 +40,67 @@ public class ShowsService
     
     #endregion
 
-    public async Task<List<Show>> SearchShows(string title, ShowType showType)
+    public async Task<List<Show>> GetShows(FilterOptionsDTO filterOptions, int currentPageNumber, int pageSize)
     {
-        if (!String.IsNullOrWhiteSpace(title)) 
-        {
-            var filter = Builders<Show>.Filter.Regex("Title", new BsonRegularExpression(title, "i"));
-
-            if (showType != ShowType.None)
-            {
-                filter &= Builders<Show>.Filter.Eq("Type", showType);
-            }
-
-            return await this.ShowsCollection.Find(filter).ToListAsync();
-        }        
-        
-        return new List<Show>();        
-    }
-
-    public async Task<List<Show>> GetShowsByType(ShowType showType)
-    {
-        var showTypeFilter = Builders<Show>.Filter.Eq("Type", showType);
-        return await this.ShowsCollection.Find(showTypeFilter).ToListAsync();
-    }
-
-    public async Task<List<Show>> FilterShows(FilterOptionsDTO filteredOptions)
-    {
-        /**
-         * Reference: https://mongodb.github.io/mongo-csharp-driver/2.16/reference/driver/definitions/ 
-         */
-        FilterDefinition<Show>? filterDef = null;
-        if (!String.IsNullOrWhiteSpace(filteredOptions.SearchString)) 
-        {
-            filterDef = Builders<Show>.Filter.Regex(widget => widget.Title, new BsonRegularExpression(filteredOptions.SearchString, "i"));
-        }
-    
-        if (filteredOptions.SelectedShowTypes.Any())
-        {
-            if (filterDef != null)
-            {
-                filterDef &= Builders<Show>.Filter.In(widget => widget.Type, filteredOptions.SelectedShowTypes);
-            }
-            else
-            {
-                filterDef = Builders<Show>.Filter.In(widget => widget.Type, filteredOptions.SelectedShowTypes);
-            }
-        }            
-
-        if (filteredOptions.SelectedSubscriptions.Any())
-        {
-            if (filterDef != null)
-            {
-                filterDef &= Builders<Show>.Filter.In(widget => widget.SubscriptionType, filteredOptions.SelectedSubscriptions);                    
-            }
-            else
-            {
-                filterDef = Builders<Show>.Filter.In(widget => widget.SubscriptionType, filteredOptions.SelectedSubscriptions);
-            }
-        }
+        FilterDefinition<Show>? filterDef = this.BuildFilterDefinition(filterOptions);
 
         if (filterDef != null)
         {
-            return await this.ShowsCollection.Find(filterDef).ToListAsync();            
+            return await this.ShowsCollection.Find(filterDef)
+                .Skip(pageSize * (currentPageNumber - 1))
+                .Limit(pageSize).ToListAsync();
         }
-        
-        return await this.ShowsCollection.Find(_ => true).ToListAsync();
+
+        return await this.ShowsCollection.Find(_ => true)
+                .Skip(pageSize * (currentPageNumber - 1))
+                .Limit(pageSize).ToListAsync();
     }
+
+    public async Task<long> GetFilteredRecordsCount(FilterOptionsDTO filterOptions)
+    {
+        FilterDefinition<Show>? filterDef = this.BuildFilterDefinition(filterOptions);
+
+        if (filterDef != null)
+        {
+            return await this.ShowsCollection.CountDocumentsAsync(filterDef);
+        }
+
+        return await this.ShowsCollection.CountDocumentsAsync(_ => true);
+    }
+    
+    private FilterDefinition<Show>? BuildFilterDefinition(FilterOptionsDTO filterOptions)
+    {
+        FilterDefinition<Show>? filterDef = null;
+        if (!String.IsNullOrWhiteSpace(filterOptions.SearchString))
+        {
+            filterDef = Builders<Show>.Filter.Regex(widget => widget.Title, new BsonRegularExpression(filterOptions.SearchString, "i"));
+        }
+
+        if (filterOptions.SelectedShowTypes.Any())
+        {
+            if (filterDef != null)
+            {
+                filterDef &= Builders<Show>.Filter.In(widget => widget.Type, filterOptions.SelectedShowTypes);
+            }
+            else
+            {
+                filterDef = Builders<Show>.Filter.In(widget => widget.Type, filterOptions.SelectedShowTypes);
+            }
+        }
+
+        if (filterOptions.SelectedSubscriptions.Any())
+        {
+            if (filterDef != null)
+            {
+                filterDef &= Builders<Show>.Filter.In(widget => widget.SubscriptionType, filterOptions.SelectedSubscriptions);
+            }
+            else
+            {
+                filterDef = Builders<Show>.Filter.In(widget => widget.SubscriptionType, filterOptions.SelectedSubscriptions);
+            }
+        }
+
+        return filterDef;
+    }
+
 }
