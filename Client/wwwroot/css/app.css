@@ -83,6 +83,10 @@ a, .btn-link {
     width: 320px;
 }
 
+.showtrack-icon {
+    filter: invert(95%) sepia(66%) saturate(5774%) hue-rotate(179deg) brightness(82%) contrast(92%);    
+}
+
 @media only screen and (max-width: 650px) {
     /* For mobiles: */ 
     .card-width {
