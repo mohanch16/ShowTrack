@@ -1,0 +1,87 @@
+@page "/chat"
+@using Microsoft.AspNetCore.SignalR.Client
+@inject NavigationManager NavigationManager
+@implements IAsyncDisposable
+
+<PageTitle>ShowBuff ChatHub | ShowTrack</PageTitle>
+
+<h1>Show Buff - Chat Room</h1>
+<span class="fst-italic small">Disclaimer: Remember, the chat sessions are not persistent, we merely acts as a proxy. You can only talk to active users.</span>
+
+<p class="mt-4">A place where you can discuss on shows with your fellow show buff experts.</p>
+
+<div class="col-lg-6 col-md-8 col-sm-11 mt-4">
+    <MudTextField @bind-Value="userInput" Label="Username" 
+        Variant="Variant.Text"></MudTextField>
+    <MudTextField T="string" Counter="@MaxMessageLength" MaxLength="@MaxMessageLength" 
+        @bind-Value="messageInput" Label="Message"  Lines="1" Class="my-2"
+        Validation="@(new Func<string, IEnumerable<string>>(MaxCharacters))" 
+        Immediate="true" Variant="Variant.Text" />
+</div>
+<MudButton Variant="Variant.Filled" OnClick="Send"
+    EndIcon="@Icons.Material.Filled.Send" Disabled="@(!IsConnected)"
+    Color="Color.Primary">Send</MudButton>
+
+<hr>
+
+<ul id="messagesList" class="lh-lg">
+    @foreach (var message in messages)
+    {
+        <li>@message</li>
+    }
+</ul>
+
+@code {
+    private HubConnection? hubConnection;
+    private List<string> messages = new List<string>();
+    private string? userInput;
+    private string? messageInput;
+    private int MaxMessageLength = 120;
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/chathub"))
+            .Build();
+
+        hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+        {
+            var encodedMsg = $"{user}> {message}";
+            messages.Add(encodedMsg);
+            StateHasChanged();
+        });
+
+        await hubConnection.StartAsync();
+    }
+
+    private IEnumerable<string> MaxCharacters(string ch)
+    {
+        if (!string.IsNullOrEmpty(ch) && this.MaxMessageLength < ch?.Length)
+            yield return $"Max {this.MaxMessageLength} characters";
+        if (0 == ch?.Length)
+            yield return $"Message cannot be empty";
+    }
+
+    private async Task Send()
+    {
+        if (hubConnection is not null)
+        {
+            if (this.messageInput?.Length > 0)
+            {
+
+                await hubConnection.SendAsync("SendMessage", userInput ?? "Anonymous", messageInput);
+            }
+        }
+    }
+
+    public bool IsConnected =>
+        hubConnection?.State == HubConnectionState.Connected;
+
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+}
