@@ -14,10 +14,15 @@ Showtrack is a movie catalog app letting users view, search, and compare various
 2) https://www.kaggle.com/datasets/shivamb/netflix-shows
 3) https://www.kaggle.com/datasets/shivamb/disney-movies-and-tv-shows
 
-<ins>Screens (Date: July 10th, 2022) <ins>:
+<ins>Screens<ins>:
+
+**Update: (Date: July 11th, 2022)**
 
 => Show Buff - Chat rooms to discuss on shows
 <img width="1421" alt="image" src="https://user-images.githubusercontent.com/22731043/178279779-6b44ae75-ebad-4280-8c1c-029793271155.png">
+
+
+**Update: (Date: July 10th, 2022)**
 
 => Shows Catalog page UI
 
