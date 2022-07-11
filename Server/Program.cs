@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.ResponseCompression;
+using ShowTrack.Server.Hubs;
 using ShowTrack.Server.Models;
 using ShowTrack.Server.Services;
 
@@ -23,6 +25,14 @@ internal class Program
             options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
 
         builder.Services.AddRazorPages();
+        
+        // SignalR
+        builder.Services.AddSignalR();
+        builder.Services.AddResponseCompression(opts =>
+        {
+            opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+                new[] { "application/octet-stream" });
+        });
 
         builder.Services.AddSwaggerGen();
     }
@@ -30,6 +40,8 @@ internal class Program
     private static void ConfigureApp(WebApplicationBuilder builder)
     {
         var app = builder.Build();
+        
+        app.UseResponseCompression();
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
@@ -58,6 +70,7 @@ internal class Program
 
         app.MapRazorPages();
         app.MapControllers();
+        app.MapHub<ChatHub>("/chathub");
         app.MapFallbackToFile("index.html");
 
         app.Run();
