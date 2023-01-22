@@ -2,14 +2,15 @@
 
 Showtrack is a movie catalog app letting users view, search, and compare various shows from Netflix, Disney Plus and Prime Video. The datasets are from Kaggle.
 
-Showtrack presents the movie catalog as a whole in the default home page, but one can go to "Movies" or "TV Shows" tabs for specific type of content. Besides presenting the shows in interactive UI with filters and pagination, it also provides a 'Show Buff' tab leveraging "Real time ASP.NET with SignalR" where application users can discuss in real-time with fellow user community and get suggestions on what show to watch next. 
+**Features description in brief**: <br/>
+Showtrack presents the movie catalog as a whole in the default home page, but one can go to "Movies" or "TV Shows" tabs for specific type of content. Besides presenting the shows in interactive UI with filters and pagination, it also provides a 'Show Buff' tab leveraging "Real time ASP.NET with SignalR" where application users can discuss in real-time with fellow user community and get suggestions on what show to watch next. [Tip: check out the screens section below for the visual view] 
 
 **Status**: `Ready for deployment (hosting is due)` 
 
 <ins>Tech stack<ins>: 
-- Framework: Blazor WebAssembly (.NET Core with Blazor-hosted model), SignalR (for chat & communication features)
+- Framework: Blazor WebAssembly (.NET Core with Blazor-hosted model), SignalR (for chat & communication feature)
 - Database: MongoDB
-- Libraries: MudBlazor (UI
+- UI Libraries: Bootstrap, and MudBlazor
 
 
 <ins>References (dataset)<ins>:
