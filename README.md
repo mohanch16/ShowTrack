@@ -5,7 +5,7 @@ Showtrack is a movie catalog app letting users view, search, and compare various
 **Status**: `Initial Version Released` 
 
 <ins>Tech stack<ins>: 
-- Framework: Blazor WebAssembly
+- Framework: Blazor WebAssembly (.NET Core with Blazor-hosted model)
 - Databaase: MongoDB
 
 
