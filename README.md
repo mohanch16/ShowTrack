@@ -2,7 +2,7 @@
 
 Showtrack is a movie catalog app letting users view, search, and compare various shows from Netflix, Disney Plus and Prime Video. The datasets are from Kaggle.
 
-**Status**: `Ready for deployment` 
+**Status**: `Ready for deployment (hosting is due)` 
 
 <ins>Tech stack<ins>: 
 - Framework: Blazor WebAssembly (.NET Core with Blazor-hosted model)
