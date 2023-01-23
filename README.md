@@ -23,7 +23,9 @@ Showtrack presents the movie catalog as a whole in the default home page, but on
 
 <hr/>
 
-**<ins>Screens</ins>**:
+**<ins>Screens (by development timeline)</ins>**:  
+The following content shows the UI and feature changes during major development milestones throughout the development timeline. For brief UI screenshots, check out the 
+screenshots in [this report](https://github.com/mohanch16/ShowTrack/blob/master/Final%20Report_%20%E2%80%9CShow%20Track%E2%80%9D%20App.pdf).
 
 **Update: (Date: July 11th, 2022)**
 
