@@ -2,7 +2,7 @@
 
 Showtrack is a movie catalog app letting users view, search, and compare various shows from Netflix, Disney Plus and Prime Video. The datasets are from Kaggle.
 
-**<ins>Features description (in brief)</ins>**:  
+**<ins>Features overview (by screens)</ins>**:  
 - Showtrack presents the movie catalog as a whole in the default home page, but one can go to "Movies" or "TV Shows" tabs for specific type of content. 
 - Besides presenting the shows in interactive UI with filters and pagination, it also provides a 'Show Buff' tab leveraging "Real time ASP.NET with SignalR" where application users can discuss in real-time with fellow user community and get suggestions on what show to watch next.  
 `Tip`: check out the screens section below, and/or screenshots in [this report](https://github.com/mohanch16/ShowTrack/blob/master/Final%20Report_%20%E2%80%9CShow%20Track%E2%80%9D%20App.pdf) for a visual view. 
